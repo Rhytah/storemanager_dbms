@@ -30,17 +30,24 @@ def add_sale_order():
     return jsonify({"message":"Access denied, Log in as attendant to add sale orders."}), 401
 
 
+@app.route('/api/v2/sales', methods=['GET'])
+def fetch_sales():
+    sales= db.get_sales()   
+    if len(sales)<1:
+        return jsonify({
+            "status":'Fail',
+            "message":'There are no products'
+        }),404
+
+    if len(sales)>=1:
+        return jsonify({
+            "message":'Available products',
+            "questions":sales
+        }),200
+ 
 
 
-
-# @app.route('/api/v1/sales/<int:saleId>', methods=['GET'])
-# def fetch_a_sale_order(saleId):
-#     return sale.fetch_sale(saleId)
-    
-# @app.route('/api/v1/sales', methods=['GET'])
-# @jwt_required
-# def fetch_all_sale_orders():
-#     current_user = get_jwt_identity()
-#     if current_user == 'admin':
-#        return sale.get_sales()
-#     return jsonify({"message":"Access denied, Log in as admin to fetch all sale orders."}), 401
+@app.route('/api/v2/sales/<int:sale_id>',methods=['GET'])
+def fetch_a_specific_product(sale_id):
+    sale=db.get_a_sale(sale_id)
+    return jsonify({'Sale order':sale})

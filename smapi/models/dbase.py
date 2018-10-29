@@ -74,3 +74,24 @@ class Databasehandler:
         product =self.cursor.fetchone()
         self.conn.commit()
         return product
+
+    def get_sales(self):
+        cmd ="SELECT sale_id,sales FROM sales;"
+        self.cursor.execute(cmd)
+        rows = self.cursor.fetchall()
+        self.conn.commit()
+        sales =[sales for sales in rows]
+        allsale_orders= []
+        for value in range(len(sales)):
+            sale=(
+                {'sale_id':sales[value][0],
+                'sale':sales[value][1]})
+            allsale_orders.append(sale)
+        return allsale_orders
+
+    def get_a_sale(self,sale_id):
+        cmd="SELECT product_name,entered_by FROM sales WHERE sale_id = {};".format(sale_id) 
+        self.cursor.execute(cmd)
+        sale =self.cursor.fetchone()
+        self.conn.commit()
+        return sale
