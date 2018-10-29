@@ -6,7 +6,7 @@ from smapi.models.sales_model import Sale
 class Databasehandler:
     
     def __init__(self):
-        self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="", port="5433")
+        self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="password", port="5433")
         self.cursor=self.conn.cursor()
         self.conn.autocommit = True
 
