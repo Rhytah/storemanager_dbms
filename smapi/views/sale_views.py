@@ -45,9 +45,7 @@ def fetch_sales():
             "questions":sales
         }),200
  
-
-
 @app.route('/api/v2/sales/<int:sale_id>',methods=['GET'])
-def fetch_a_specific_product(sale_id):
+def fetch_a_single_sale(sale_id):
     sale=db.get_a_sale(sale_id)
     return jsonify({'Sale order':sale})

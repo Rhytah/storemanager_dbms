@@ -1,5 +1,7 @@
 import psycopg2
 import re
+
+from config import app_configuration
 from smapi.models.sales_model import Sale
 class Databasehandler:
     
@@ -10,7 +12,14 @@ class Databasehandler:
 
         
     def connect(self):
-
+        if app_configuration.get('ENV') == 'development':
+            dbname = app_configuration["development"].DATABASE
+            self.conn['dbname'] = dbname
+            
+        if app_configuration.get('ENV') == 'testing':
+            dbname = app_configuration['testing'].DATABASE
+            self.conn['dbname'] = dbname
+            
         try:
             connection_credentials= """
                     dbname='store_db' user= 'postgres' host='localhost' port='5433'
