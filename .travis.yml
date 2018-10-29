@@ -11,7 +11,7 @@ install:
   
 virtualenv:
 before_script:
-  - "psql -c 'create database store_testdb;' -U postgres"
+  - "psql -c 'create database store_test;' -U postgres"
 script: 
   - nosetests --with-coverage
 after_success:
