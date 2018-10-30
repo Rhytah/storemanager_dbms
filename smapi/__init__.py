@@ -11,6 +11,8 @@ if __name__ == '__main__':
     db=Databasehandler()
     db.connect()
     db.create_tables()
+    app.config['JWT_SECRET_KEY'] = 'andela13'  
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] =False
 
 
 @app.route('/')

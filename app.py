@@ -7,6 +7,7 @@ def create_app(mode):
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     app.config.from_object(app_configuration[mode])
+  
      
     
     return app

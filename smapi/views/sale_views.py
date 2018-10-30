@@ -7,7 +7,8 @@ from smapi.models.sales_model import Sale
 from smapi.models.user_model import User
 from smapi.models.dbase import Databasehandler
 
-app.config['JWT_SECRET_KEY'] = 'andela13' 
+
+app.config['JWT_SECRET_KEY'] = 'andela13'  
 
 jwt = JWTManager(app)
 db = Databasehandler()
@@ -41,7 +42,6 @@ def fetch_sales():
 
     if len(sales)>=1:
         return jsonify({
-            "message":'Available products',
             "Sale_orders":sales
         }),200
  

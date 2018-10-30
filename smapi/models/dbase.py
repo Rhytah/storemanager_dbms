@@ -99,7 +99,7 @@ class Databasehandler:
         return allsale_orders
 
     def get_a_sale(self,sale_id):
-        cmd="SELECT product_name,entered_by FROM sales WHERE sale_id = {};".format(sale_id) 
+        cmd="SELECT entered_by,product_name,unit_price,quantity FROM sales WHERE sale_id = {};".format(sale_id) 
         self.cursor.execute(cmd)
         sale =self.cursor.fetchone()
         self.conn.commit()
