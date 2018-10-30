@@ -13,7 +13,6 @@ jwt = JWTManager(app)
 
 db = Databasehandler()
 
-
 @app.route("/api/v2/products", methods =["POST"])
 @jwt_required
 def add_products():
@@ -57,10 +56,15 @@ def fetch_products():
             "message":'Available products',
             "questions":products
         }),200
- 
-
 
 @app.route('/api/v2/products/<int:product_id>',methods=['GET'])
 def fetch_a_specific_product(product_id):
     product=db.get_a_pdt(product_id)
     return jsonify({'Product':product})
+
+@app.route('/api/v2/products/<int:product_id>', methods=['DELETE'])
+def remove_product(product_id):
+    db.delete_product(product_id)
+    return jsonify({
+        "message":"You have deleted product"
+    })
