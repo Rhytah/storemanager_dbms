@@ -23,8 +23,6 @@ def login_user():
 
     if not password:
         return jsonify({"msg" : "Incorrect password"}),400
-    # if role != "Owner" or "Attendant":
-    #     return jsonify({"msg":"Role can only be either Owner or Attendant. Input valid role"})
 
     access_token= create_access_token(identity=username)
  
