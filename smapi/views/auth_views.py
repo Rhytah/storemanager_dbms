@@ -5,8 +5,7 @@ from smapi.models.dbase import Databasehandler
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 
-app.config['JWT_SECRET_KEY'] = 'andela13'  
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] =False
+
 jwt = JWTManager(app)
 db=Databasehandler()
 
@@ -15,12 +14,10 @@ db=Databasehandler()
 @app.route('/api/v2/auth/login', methods =['POST'])
 def login_user():
     user_data=request.get_json()
-    
     username=user_data['username']
     password=user_data['password']
-    db_query=db.get_by_argument('users','username',username)
-    # user=User(db_query[0], db_query[1],db_query[2],db_query[3])
-   
+    
+  
     if not username:
         return jsonify({"msg" : "Provide Valid Username"}),400
 
