@@ -13,8 +13,6 @@ if __name__ == '__main__':
     db.create_tables()
     app.config['JWT_SECRET_KEY'] = 'andela13'  
     
-
-
 @app.route('/')
 @app.route('/index')
 def index():
