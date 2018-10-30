@@ -17,7 +17,7 @@ db = Databasehandler()
 @jwt_required
 def add_products():
     current_user = get_jwt_identity()
-    if current_user == 'admin':
+    if current_user == 'Owner':
         request_data=request.get_json()
         product_name= request_data.get('product_name')
         unit_price = request_data.get('unit_price')

@@ -34,7 +34,7 @@ class Databasehandler:
 
 
     def create_tables(self):
-        usercmd="CREATE TABLE IF NOT EXISTS users(user_id SERIAL PRIMARY KEY,username VARCHAR (30),password VARCHAR (10),admin_role BOOL)"
+        usercmd="CREATE TABLE IF NOT EXISTS users(user_id SERIAL PRIMARY KEY,username VARCHAR (30),password VARCHAR (10),role BOOLEAN DEFAULT FALSE NOT NULL)"
         self.cursor.execute(usercmd)
     
         pdtcmd="CREATE TABLE IF NOT EXISTS products(product_id SERIAL PRIMARY KEY,product_name VARCHAR(20),unit_price INT, category VARCHAR(15))"
@@ -42,8 +42,8 @@ class Databasehandler:
         salecmd="CREATE TABLE IF NOT EXISTS sales(sale_id SERIAL PRIMARY KEY ,entered_by VARCHAR,product_name VARCHAR (20),unit_price INT,quantity INT)"
         self.cursor.execute(salecmd)
         adminuser=f"""
-                INSERT INTO users(username, password, admin_role)
-                VALUES('admin','admin' ,True)
+                INSERT INTO users(username, password, role)
+                VALUES('admin','admin' ,TRUE)
                 """
         self.cursor.execute(adminuser)
 
@@ -120,3 +120,8 @@ class Databasehandler:
         updated_rows = self.cursor.rowcount
         self.conn.commit()
         return updated_rows
+
+    def add_user(self,username,password):
+        cmd="""INSERT INTO users(username,password) 
+        VALUES ('{}','{}');""".format(username,password)
+        self.cursor.execute(cmd)

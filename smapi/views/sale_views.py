@@ -7,8 +7,8 @@ from smapi.models.sales_model import Sale
 from smapi.models.user_model import User
 from smapi.models.dbase import Databasehandler
 
-
-app.config['JWT_SECRET_KEY'] = 'andela13'  
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] =False
+ 
 
 jwt = JWTManager(app)
 db = Databasehandler()
