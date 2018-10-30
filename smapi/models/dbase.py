@@ -9,9 +9,7 @@ class Databasehandler:
         self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="", port="5433")
         self.cursor=self.conn.cursor()
         self.conn.autocommit = True
-
         
-    def connect(self):
         if app_configuration.get('ENV') == 'development':
             dbname = app_configuration["development"].DATABASE
             self.conn['dbname'] = dbname
@@ -19,6 +17,8 @@ class Databasehandler:
         if app_configuration.get('ENV') == 'testing':
             dbname = app_configuration['testing'].DATABASE
             self.conn['dbname'] = dbname
+        
+    def connect(self):
             
         try:
             connection_credentials= """
