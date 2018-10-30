@@ -55,7 +55,7 @@ def fetch_products():
     if len(products)>=1:
         return jsonify({
             "message":'Available products',
-            "questions":products
+            "products":products
         }),200
  
 
