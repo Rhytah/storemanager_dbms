@@ -42,7 +42,7 @@ def fetch_sales():
     if len(sales)>=1:
         return jsonify({
             "message":'Available products',
-            "questions":sales
+            "Sale_orders":sales
         }),200
  
 
