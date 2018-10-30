@@ -42,7 +42,7 @@ class Databasehandler:
         salecmd="CREATE TABLE IF NOT EXISTS sales(sale_id SERIAL PRIMARY KEY ,entered_by VARCHAR,product_name VARCHAR (20),unit_price INT,quantity INT)"
         self.cursor.execute(salecmd)
         adminuser=f"""
-                INSERT INTO users(username, password, role)
+                INSERT INTO users(username, password, admin_role)
                 VALUES('admin','admin' ,True)
                 """
         self.cursor.execute(adminuser)

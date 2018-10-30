@@ -8,7 +8,7 @@ from smapi.models.user_model import User
 from smapi.models.dbase import Databasehandler
 import re
 
-app.config['JWT_SECRET_KEY'] = 'andela13' 
+
 jwt = JWTManager(app)
 
 db = Databasehandler()
@@ -19,8 +19,8 @@ def add_products():
     current_user = get_jwt_identity()
     if current_user == 'admin':
         request_data=request.get_json()
-        product_name= request_data.get('productName')
-        unit_price = request_data.get('productPrice')
+        product_name= request_data.get('product_name')
+        unit_price = request_data.get('unit_price')
 
         if not product_name:
             return "Product Name is missing"
@@ -54,7 +54,7 @@ def fetch_products():
     if len(products)>=1:
         return jsonify({
             "message":'Available products',
-            "questions":products
+            "products":products
         }),200
 
 @app.route('/api/v2/products/<int:product_id>',methods=['GET'])
