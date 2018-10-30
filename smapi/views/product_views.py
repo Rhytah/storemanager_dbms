@@ -68,3 +68,10 @@ def remove_product(product_id):
     return jsonify({
         "message":"You have deleted product"
     })
+
+@app.route('/api/v2/products/<int:product_id>', methods=['PUT'])
+def modify_product(product_id):
+    request_data=request.get_json()
+    unit_price=request_data['unit_price']
+    db.modify_product(unit_price, product_id)
+    return jsonify({"message":"Successfully updated product"})

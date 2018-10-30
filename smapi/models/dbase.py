@@ -112,3 +112,11 @@ class Databasehandler:
         self.cursor.execute(del_cmd)
         self.conn.commit
         return rows_deleted
+    
+    def modify_product(self,unit_price,product_id):
+        sql = "UPDATE products SET unit_price = '{}' WHERE product_id = '{}';".format(unit_price,product_id)
+        updated_rows = 0    
+        self.cursor.execute(sql)
+        updated_rows = self.cursor.rowcount
+        self.conn.commit()
+        return updated_rows
