@@ -45,8 +45,6 @@ def fetch_sales():
             "Sale_orders":sales
         }),200
  
-
-
 @app.route('/api/v2/sales/<int:sale_id>',methods=['GET'])
 def fetch_a_single_sale(sale_id):
     sale=db.get_a_sale(sale_id)

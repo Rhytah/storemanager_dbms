@@ -1,5 +1,7 @@
 import psycopg2
 import re
+
+from config import app_configuration
 from smapi.models.sales_model import Sale
 class Databasehandler:
     
@@ -10,7 +12,14 @@ class Databasehandler:
 
         
     def connect(self):
-
+        if app_configuration.get('ENV') == 'development':
+            dbname = app_configuration["development"].DATABASE
+            self.conn['dbname'] = dbname
+            
+        if app_configuration.get('ENV') == 'testing':
+            dbname = app_configuration['testing'].DATABASE
+            self.conn['dbname'] = dbname
+            
         try:
             connection_credentials= """
                     dbname='store_db' user= 'postgres' host='localhost' port='5433'
@@ -33,7 +42,7 @@ class Databasehandler:
         salecmd="CREATE TABLE IF NOT EXISTS sales(sale_id SERIAL PRIMARY KEY ,entered_by VARCHAR,product_name VARCHAR (20),unit_price INT,quantity INT)"
         self.cursor.execute(salecmd)
         adminuser=f"""
-                INSERT INTO users(username, password, role)
+                INSERT INTO users(username, password, admin_role)
                 VALUES('admin','admin' ,True)
                 """
         self.cursor.execute(adminuser)
@@ -95,3 +104,11 @@ class Databasehandler:
         sale =self.cursor.fetchone()
         self.conn.commit()
         return sale
+
+    def delete_product(self,product_id):
+        del_cmd="DELETE FROM products WHERE product_id={}".format(product_id)
+        rows_deleted=self.cursor.rowcount
+        print(rows_deleted)
+        self.cursor.execute(del_cmd)
+        self.conn.commit
+        return rows_deleted

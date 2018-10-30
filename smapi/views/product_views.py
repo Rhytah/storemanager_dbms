@@ -8,11 +8,10 @@ from smapi.models.user_model import User
 from smapi.models.dbase import Databasehandler
 import re
 
-app.config['JWT_SECRET_KEY'] = 'andela13' 
+
 jwt = JWTManager(app)
 
 db = Databasehandler()
-
 
 @app.route("/api/v2/products", methods =["POST"])
 @jwt_required
@@ -20,8 +19,8 @@ def add_products():
     current_user = get_jwt_identity()
     if current_user == 'admin':
         request_data=request.get_json()
-        product_name= request_data.get('productName')
-        unit_price = request_data.get('productPrice')
+        product_name= request_data.get('product_name')
+        unit_price = request_data.get('unit_price')
 
         if not product_name:
             return "Product Name is missing"
@@ -57,10 +56,15 @@ def fetch_products():
             "message":'Available products',
             "products":products
         }),200
- 
-
 
 @app.route('/api/v2/products/<int:product_id>',methods=['GET'])
 def fetch_a_specific_product(product_id):
     product=db.get_a_pdt(product_id)
     return jsonify({'Product':product})
+
+@app.route('/api/v2/products/<int:product_id>', methods=['DELETE'])
+def remove_product(product_id):
+    db.delete_product(product_id)
+    return jsonify({
+        "message":"You have deleted product"
+    })
