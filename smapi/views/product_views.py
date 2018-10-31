@@ -1,17 +1,17 @@
 from flask import Flask, Request, json, jsonify, request
-from flask_jwt_extended import (JWTManager, create_access_token,
-                                get_jwt_identity, jwt_required)
+from smapi import app
+from flask_jwt_extended import JWTManager
+from smapi.models.dbase import Databasehandler
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
-from app import app
 from smapi.models.product_model import Product
 from smapi.models.user_model import User
-from smapi.models.dbase import Databasehandler
-import re
 
+import re
+db=Databasehandler()
 
 jwt = JWTManager(app)
 
-db = Databasehandler()
 
 @app.route("/api/v2/products", methods =["POST"])
 @jwt_required

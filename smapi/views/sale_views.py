@@ -1,18 +1,11 @@
 from flask import Flask, Request, json, jsonify, request
-from flask_jwt_extended import (JWTManager, create_access_token,
-                                get_jwt_identity, jwt_required)
-
-from app import app
+from smapi import app
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from smapi.models.sales_model import Sale
 from smapi.models.user_model import User
 from smapi.models.dbase import Databasehandler
 
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] =False
- 
-
-jwt = JWTManager(app)
-db = Databasehandler()
-
+db=Databasehandler()
 
 @app.route('/api/v2/sales',methods=['POST'])
 @jwt_required

@@ -1,15 +1,20 @@
 from flask import Flask, json, jsonify, request
-from app import app
+from smapi import app
 from smapi.models.user_model import User
-from smapi.models.dbase import Databasehandler
-from flask_jwt_extended import (JWTManager, create_access_token,
+
+from flask_jwt_extended import (JWTManager,create_access_token,
                                 get_jwt_identity, jwt_required)
 
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] =False
-app.config['JWT_SECRET_KEY'] = 'andela13' 
-jwt = JWTManager(app)
-db=Databasehandler()
+from smapi.models.dbase import Databasehandler
+# app.config['JWT_ACCESS_TOKEN_EXPIRES'] =False
+# app.config['JWT_SECRET_KEY'] = 'andela13' 
 
+jwt=JWTManager()
+db=Databasehandler()
+@app.route('/')
+@app.route('/index')
+def index():
+    return "StoreManager App. Manage your Products and Sales efficiently using DBMS"
 
 
 @app.route('/api/v2/auth/login', methods =['POST'])

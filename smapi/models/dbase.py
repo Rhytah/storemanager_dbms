@@ -1,39 +1,58 @@
 import psycopg2
 import re
+import os
+from config import app_configuration,Config,DevelopmentConfig,TestingConfig
+from smapi import app
 
-from config import app_configuration
-from smapi.models.sales_model import Sale
+
+dc=DevelopmentConfig()
+tc=TestingConfig()
 class Databasehandler:
     
     def __init__(self):
-        self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="", port="5433")
-        self.cursor=self.conn.cursor()
-        self.conn.autocommit = True
+        # self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="", port="5433")
+        # self.cursor=self.conn.cursor()
+        # self.conn.autocommit = True
         
-        if app_configuration.get('ENV') == 'development':
-            dbname = app_configuration["development"].DATABASE
-            self.conn['dbname'] = dbname
+        
             
-        if app_configuration.get('ENV') == 'testing':
-            dbname = app_configuration['testing'].DATABASE
-            self.conn['dbname'] = dbname
+        # if app.config.get('ENV') == 'testing':
+        #     print(app.config.get('DATABASE_URI'))
+            # dbname = app_configuration['testing'].DATABASE
+            # self.conn['dbname'] = dbname
         
-    def connect(self):
+
             
         try:
+            
             connection_credentials= """
                     dbname='store_db' user= 'postgres' host='localhost' port='5433'
                     """
-            self.conn = psycopg2.connect(connection_credentials)
-            self.conn.autocommit = True
-            self.cursor = self.conn.cursor()
+            
+            connection_credentials1="""
+                    dbname='test_db' user= 'postgres' host='localhost' port='5433'
+                    """
+                # self.conn['dbname'] = dbname
+            if app.config.get('ENV') == 'development':
+                print(app.config.get('DATABASE_URI'))
+                self.conn = psycopg2.connect(connection_credentials)
+                self.conn.autocommit = True
+                self.cursor = self.conn.cursor()
             print("\n\n Database Connected\n\n")
+            if app.config.get('ENV') == 'testing':
+                print(app.config.get('DATABASE_URI'))
+                self.conn = psycopg2.connect(connection_credentials1)
+                self.conn.autocommit = True
+                self.cursor = self.conn.cursor()
+                print("\n\n Database Connected\n\n")
+                
+            
         except Exception as e:
             print(e)
             print("Connection failed")
 
 
-    def create_tables(self):
+    # def create_tables(self):
         usercmd="CREATE TABLE IF NOT EXISTS users(user_id SERIAL PRIMARY KEY,username VARCHAR (30),password VARCHAR (10),role BOOLEAN DEFAULT FALSE NOT NULL)"
         self.cursor.execute(usercmd)
     

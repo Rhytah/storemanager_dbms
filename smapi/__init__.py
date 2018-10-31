@@ -1,19 +1,19 @@
 from flask import Flask
 
+from config import app_configuration
 
-app = Flask(__name__)
 
-from smapi.models.dbase import Databasehandler
-from smapi.views import auth_views, product_views,sale_views
-
-if __name__ == '__main__':
-    app.run()
-    db=Databasehandler()
-    db.connect()
-    db.create_tables()
-    app.config['JWT_SECRET_KEY'] = 'andela13'  
+def create_app(mode):
+    app = Flask(__name__)
+    # app.config.from_pyfile('config.py')
+    app.config.from_object(app_configuration[mode])
     
-@app.route('/')
-@app.route('/index')
-def index():
-    return "StoreManager App. Manage your Products and Sales efficiently using DBMS"
+    return app
+
+app=create_app(mode='testing')
+
+
+from .views import auth_views,sale_views,product_views
+
+if __name__ =='__main__':
+    app.run()
