@@ -8,7 +8,7 @@ class Databasehandler:
     
     def __init__(self):
         
-        self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="", port="5433")
+        self.conn =psycopg2.connect(dbname="store_db", user="postgres", password="",port="5433")
         self.cursor=self.conn.cursor()
         self.conn.autocommit = True
         
@@ -24,11 +24,11 @@ class Databasehandler:
         try:
             
             connection_credentials= """
-                    dbname='store_db' user= 'postgres' host='localhost' port='5433'
+                    dbname='store_db' user= 'postgres'  port='5433'
                     """
             
             connection_credentials1="""
-                    dbname='test_db' user= 'postgres' host='localhost' port='5433'
+                    dbname='test_db' user= 'postgres'  port='5433'
                     """
                 # self.conn['dbname'] = dbname
                 
