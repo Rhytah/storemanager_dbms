@@ -35,44 +35,44 @@ class ProductTestCase(unittest.TestCase):
         res= self.client.get('/api/v2/products')
         self.assertEqual(res.status_code,404)
         
-    def test_fetch_product_by_id(self):
+    # def test_fetch_product_by_id(self):
         
-        result = self.client.get(
-            '/api/v2/products/1')
-        self.assertEqual(result.status_code, 404)
+    #     result = self.client.get(
+    #         '/api/v2/products/1')
+    #     self.assertEqual(result.status_code, 404)
         
-    def test_product_can_be_edited(self):
+    # def test_product_can_be_edited(self):
 
-        rv = self.client.post(
-            '/api/v2/products/',
-            data={
-                "product_id":1,
-                "product_name":"crocs",
-                "unit_price": "3000"})
-        self.assertEqual(rv.status_code, 401)
-        rv = self.client.put(
-            '/api/v2/products/1',
-            data={
-                "unit_price":"5000"
-            })
-        self.assertEqual(rv.status_code, 200)
-        results = self.client.get('/api/v2/products/1')
-        self.assertIn("5000", str(results.data))
+    #     rv = self.client.post(
+    #         '/api/v2/products/',
+    #         data={
+    #             "product_id":1,
+    #             "product_name":"crocs",
+    #             "unit_price": "3000"})
+    #     self.assertEqual(rv.status_code, 401)
+    #     rv = self.client.put(
+    #         '/api/v2/products/1',
+    #         data={
+    #             "unit_price":"5000"
+    #         })
+    #     self.assertEqual(rv.status_code, 200)
+    #     results = self.client.get('/api/v2/products/1')
+    #     self.assertIn("5000", str(results.data))
         
 
-    def test_product_deletion(self):
-        rv = self.client.post(
-            '/api/v2/products/',
-            data={
-                "product_id":1,
-                "product_name":"crocs",
-                "unit_price": "3000"})
-        self.assertEqual(rv.status_code, 401)
-        res = self.client.delete('/api/v2/products/1')
-        self.assertEqual(res.status_code, 200)
-        # Test to see if it exists, should return a 404
-        result = self.client.get('/api/v2/products/1')
-        self.assertEqual(result.status_code, 404)
+    # def test_product_deletion(self):
+    #     rv = self.client.post(
+    #         '/api/v2/products/',
+    #         data={
+    #             "product_id":1,
+    #             "product_name":"crocs",
+    #             "unit_price": "3000"})
+    #     self.assertEqual(rv.status_code, 401)
+    #     res = self.client.delete('/api/v2/products/1')
+    #     self.assertEqual(res.status_code, 200)
+    #     # Test to see if it exists, should return a 404
+    #     result = self.client.get('/api/v2/products/1')
+    #     self.assertEqual(result.status_code, 404)
         
 
 if __name__ == "__main__":

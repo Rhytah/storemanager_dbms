@@ -7,9 +7,10 @@ from flask import current_app as app
 class Databasehandler:
     
     def __init__(self):
-        # self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="", port="5433")
-        # self.cursor=self.conn.cursor()
-        # self.conn.autocommit = True
+        
+        self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="", port="5433")
+        self.cursor=self.conn.cursor()
+        self.conn.autocommit = True
         
         
             
@@ -67,12 +68,14 @@ class Databasehandler:
 
     def get_by_argument(self, table, column_name,argument):
         query = "SELECT * FROM {} WHERE {} = '{}';".format(table, column_name, argument)
+        self.cursor = self.conn.cursor()
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         return result
 
     def add_sale(self,entered_by,product_name,unit_price,quantity):
         cmd="INSERT INTO sales(entered_by,product_name,unit_price,quantity) VALUES ('{}','{}','{}','{}');".format(entered_by,product_name,unit_price,quantity)
+        
         self.cursor.execute(cmd)
 
     def add_pdt(self,product_name,unit_price):
