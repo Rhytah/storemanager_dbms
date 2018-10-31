@@ -1,15 +1,16 @@
-from flask import Flask, Request, json, jsonify, request
-from smapi import app
+from flask import Flask, Request, json, jsonify, request,Blueprint,current_app as app
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from smapi.models.sales_model import Sale
 from smapi.models.user_model import User
 from smapi.models.dbase import Databasehandler
 
-db=Databasehandler()
+sale = Blueprint("sale",__name__)
 
-@app.route('/api/v2/sales',methods=['POST'])
+
+@sale.route('/api/v2/sales',methods=['POST'])
 @jwt_required
 def add_sale_order():
+    db = Databasehandler()
     current_user = get_jwt_identity()
     entered_by = current_user
     sale_data= request.get_json()
@@ -24,8 +25,9 @@ def add_sale_order():
     return jsonify({"message":"Access denied, Log in as attendant to add sale orders."}), 401
 
 
-@app.route('/api/v2/sales', methods=['GET'])
+@sale.route('/api/v2/sales', methods=['GET'])
 def fetch_sales():
+    db = Databasehandler()
     sales= db.get_sales()   
     if len(sales)<1:
         return jsonify({
@@ -38,7 +40,8 @@ def fetch_sales():
             "Sale_orders":sales
         }),200
  
-@app.route('/api/v2/sales/<int:sale_id>',methods=['GET'])
+@sale.route('/api/v2/sales/<int:sale_id>',methods=['GET'])
 def fetch_a_single_sale(sale_id):
+    db = Databasehandler()
     sale=db.get_a_sale(sale_id)
     return jsonify({'Sale order':sale})

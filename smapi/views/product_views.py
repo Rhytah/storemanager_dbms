@@ -1,5 +1,4 @@
-from flask import Flask, Request, json, jsonify, request
-from smapi import app
+from flask import Flask, Request, json, jsonify, request,Blueprint, current_app as app
 from flask_jwt_extended import JWTManager
 from smapi.models.dbase import Databasehandler
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -8,14 +7,15 @@ from smapi.models.product_model import Product
 from smapi.models.user_model import User
 
 import re
-db=Databasehandler()
-
-jwt = JWTManager(app)
+product = Blueprint("product",__name__)
 
 
-@app.route("/api/v2/products", methods =["POST"])
+
+
+@product.route("/api/v2/products", methods =["POST"])
 @jwt_required
 def add_products():
+    db = Databasehandler()
     current_user = get_jwt_identity()
     if current_user == 'Owner':
         request_data=request.get_json()
@@ -42,8 +42,9 @@ def add_products():
         return jsonify({"message":"Product successfully added"})
     return jsonify({"message":"Access denied, Log in as admin to add Products"}), 401
 
-@app.route('/api/v2/products', methods=['GET'])
+@product.route('/api/v2/products', methods=['GET'])
 def fetch_products():
+    db = Databasehandler()
     products= db.get_pdts()   
     if len(products)<1:
         return jsonify({
@@ -57,20 +58,23 @@ def fetch_products():
             "products":products
         }),200
 
-@app.route('/api/v2/products/<int:product_id>',methods=['GET'])
+@product.route('/api/v2/products/<int:product_id>',methods=['GET'])
 def fetch_a_specific_product(product_id):
+    db = Databasehandler()
     product=db.get_a_pdt(product_id)
     return jsonify({'Product':product})
 
-@app.route('/api/v2/products/<int:product_id>', methods=['DELETE'])
+@product.route('/api/v2/products/<int:product_id>', methods=['DELETE'])
 def remove_product(product_id):
+    db = Databasehandler()
     db.delete_product(product_id)
     return jsonify({
         "message":"You have deleted product"
     })
 
-@app.route('/api/v2/products/<int:product_id>', methods=['PUT'])
+@product.route('/api/v2/products/<int:product_id>', methods=['PUT'])
 def modify_product(product_id):
+    db = Databasehandler()
     request_data=request.get_json()
     unit_price=request_data['unit_price']
     db.modify_product(unit_price, product_id)

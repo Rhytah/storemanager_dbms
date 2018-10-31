@@ -1,12 +1,9 @@
 import psycopg2
 import re
 import os
-from config import app_configuration,Config,DevelopmentConfig,TestingConfig
-from smapi import app
+from flask import current_app as app
 
 
-dc=DevelopmentConfig()
-tc=TestingConfig()
 class Databasehandler:
     
     def __init__(self):
@@ -22,7 +19,7 @@ class Databasehandler:
             # self.conn['dbname'] = dbname
         
 
-            
+    
         try:
             
             connection_credentials= """
@@ -33,6 +30,7 @@ class Databasehandler:
                     dbname='test_db' user= 'postgres' host='localhost' port='5433'
                     """
                 # self.conn['dbname'] = dbname
+                
             if app.config.get('ENV') == 'development':
                 print(app.config.get('DATABASE_URI'))
                 self.conn = psycopg2.connect(connection_credentials)
@@ -52,7 +50,7 @@ class Databasehandler:
             print("Connection failed")
 
 
-    # def create_tables(self):
+    def create_tables(self):
         usercmd="CREATE TABLE IF NOT EXISTS users(user_id SERIAL PRIMARY KEY,username VARCHAR (30),password VARCHAR (10),role BOOLEAN DEFAULT FALSE NOT NULL)"
         self.cursor.execute(usercmd)
     

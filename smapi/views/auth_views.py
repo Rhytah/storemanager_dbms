@@ -1,24 +1,23 @@
-from flask import Flask, json, jsonify, request
-from smapi import app
+from flask import Flask, json, jsonify, request,Blueprint, current_app as app
 from smapi.models.user_model import User
 
 from flask_jwt_extended import (JWTManager,create_access_token,
                                 get_jwt_identity, jwt_required)
 
 from smapi.models.dbase import Databasehandler
-# app.config['JWT_ACCESS_TOKEN_EXPIRES'] =False
-# app.config['JWT_SECRET_KEY'] = 'andela13' 
 
-jwt=JWTManager()
-db=Databasehandler()
-@app.route('/')
-@app.route('/index')
+auth = Blueprint("auth",__name__)
+
+# db=Databasehandler()
+@auth.route('/')
+@auth.route('/index')
 def index():
-    return "StoreManager App. Manage your Products and Sales efficiently using DBMS"
+    return "StoreManager auth. Manage your Products and Sales efficiently using DBMS"
 
 
-@app.route('/api/v2/auth/login', methods =['POST'])
+@auth.route('/api/v2/auth/login', methods =['POST'])
 def login_user():
+    db = Databasehandler()
     user_data=request.get_json()
     username=user_data['username']
     password=user_data['password']
@@ -35,9 +34,10 @@ def login_user():
         "message":f"{username}, successfully logged in ",
         "access_token":access_token}),200
 
-@app.route('/api/v2/auth/signup',methods=['POST'])
+@auth.route('/api/v2/auth/signup',methods=['POST'])
 @jwt_required
 def signup():
+    db = Databasehandler()
     current_user=get_jwt_identity()
     if current_user == 'admin':
         user_data=request.get_json()
@@ -46,9 +46,9 @@ def signup():
     
         db.add_user(username,password)
         return jsonify({"message":f"{username} successfully added"})
-    return jsonify({"message":"Only Admin can add users. Contact Application administrator"})
+    return jsonify({"message":"Only Admin can add users. Contact authlication administrator"})
 
-@app.route('/api/v2/protected', methods =['GET'])
+@auth.route('/api/v2/protected', methods =['GET'])
 @jwt_required
 def protected():
     #access the identity of current user

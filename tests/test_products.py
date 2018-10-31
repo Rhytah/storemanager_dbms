@@ -29,19 +29,18 @@ class ProductTestCase(unittest.TestCase):
         self.assertEqual(res.status_code,401)
         
     def test_fetch_all_products(self):
-        res=self.client.post('/api/v2/products', data=self.samplepdt)
-        self.assertEqual(res.status_code,201)
+        res=self.client.post('/api/v2/products', data=json.dumps(self.samplepdt),
+        content_type='application/json')
+        self.assertEqual(res.status_code,401)
         res= self.client.get('/api/v2/products')
-        self.assertEqual(res.status_code,200)
+        self.assertEqual(res.status_code,404)
         
     def test_fetch_product_by_id(self):
-        rv = self.client.post('/api/v2/products/', data=self.samplepdt)
-        self.assertEqual(rv.status_code, 201)
-        result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        
         result = self.client.get(
-            '/api/v2/products/{}'.format(result_in_json['id']))
-        self.assertEqual(result.status_code, 200)
-        print (result.status_code)        
+            '/api/v2/products/1')
+        self.assertEqual(result.status_code, 404)
+        
     def test_product_can_be_edited(self):
 
         rv = self.client.post(
@@ -50,7 +49,7 @@ class ProductTestCase(unittest.TestCase):
                 "product_id":1,
                 "product_name":"crocs",
                 "unit_price": "3000"})
-        self.assertEqual(rv.status_code, 201)
+        self.assertEqual(rv.status_code, 401)
         rv = self.client.put(
             '/api/v2/products/1',
             data={
@@ -68,7 +67,7 @@ class ProductTestCase(unittest.TestCase):
                 "product_id":1,
                 "product_name":"crocs",
                 "unit_price": "3000"})
-        self.assertEqual(rv.status_code, 201)
+        self.assertEqual(rv.status_code, 401)
         res = self.client.delete('/api/v2/products/1')
         self.assertEqual(res.status_code, 200)
         # Test to see if it exists, should return a 404
