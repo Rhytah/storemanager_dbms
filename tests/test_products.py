@@ -4,76 +4,97 @@ import os
 import json
 from smapi import create_app
 from config import Config
+from flask_jwt_extended import JWTManager, create_access_token
 from smapi.models.dbase import Databasehandler
-
-db=Databasehandler()
+# from tests import BaseTestCase
+# db=Databasehandler()
 
 
 class ProductTestCase(unittest.TestCase):
     def setUp(self):
-        app=create_app(mode='testing')
-        self.client= app.test_client()
-        self.db=db
+        self.app=create_app(mode='testing')
+        self.test_client= self.app.test_client()
+        self.db=Databasehandler()
         self.samplepdt={
             "product_id":1,
             "product_name":"crocs",
             "unit_price": "3000"
         }
+
+        self.token=''
+        self.auth_data = {
+            'username': 'admin',
+            'password': 'admin'
+        }
         
 
+        self.request_data={
+            "productId":1,
+            "productName":"Foam",
+            "productPrice":3000
+        }
+        
     def test_add_product(self):
         # db.add_pdt("cupps",30000)
-        res=self.client.post('/api/v2/products', data=json.dumps(self.samplepdt),
-        content_type='application/json')
-        
-        self.assertEqual(res.status_code,401)
-        
-    def test_fetch_all_products(self):
-        res=self.client.post('/api/v2/products', data=json.dumps(self.samplepdt),
+        res=self.test_client.post('/api/v2/products', data=json.dumps(self.request_data),
         content_type='application/json')
         self.assertEqual(res.status_code,401)
-        res= self.client.get('/api/v2/products')
-        self.assertEqual(res.status_code,404)
-        
-    # def test_fetch_product_by_id(self):
-        
-    #     result = self.client.get(
-    #         '/api/v2/products/1')
-    #     self.assertEqual(result.status_code, 404)
-        
-    # def test_product_can_be_edited(self):
+        self.assertIn('Missing Authorization Header', str(res.data))
 
-    #     rv = self.client.post(
-    #         '/api/v2/products/',
-    #         data={
-    #             "product_id":1,
-    #             "product_name":"crocs",
-    #             "unit_price": "3000"})
-    #     self.assertEqual(rv.status_code, 401)
-    #     rv = self.client.put(
-    #         '/api/v2/products/1',
-    #         data={
-    #             "unit_price":"5000"
-    #         })
-    #     self.assertEqual(rv.status_code, 200)
-    #     results = self.client.get('/api/v2/products/1')
-    #     self.assertIn("5000", str(results.data))
-        
+    
+    def test_admin_can_add_product(self): 
+        with self.app.app_context():
+            token = create_access_token('admin')
+            headers={'Authorization':f'Bearer {token}'}
 
-    # def test_product_deletion(self):
-    #     rv = self.client.post(
-    #         '/api/v2/products/',
-    #         data={
-    #             "product_id":1,
-    #             "product_name":"crocs",
-    #             "unit_price": "3000"})
-    #     self.assertEqual(rv.status_code, 401)
-    #     res = self.client.delete('/api/v2/products/1')
-    #     self.assertEqual(res.status_code, 200)
-    #     # Test to see if it exists, should return a 404
-    #     result = self.client.get('/api/v2/products/1')
-    #     self.assertEqual(result.status_code, 404)
+            response = self.test_client.post(
+                '/api/v2/products',
+                headers=headers,
+                content_type='application/json')
+            return(response.status)
+           
+    def test_add_product_without_token(self):
+        response = self.test_client.post(
+            '/api/v2/products', data=json.dumps(self.request_data), content_type='application/json'
+        )
+        self.assertEqual(response.status_code,401)
+        self.assertIn(
+            'Missing Authorization Header', str(response.data)
+        )
+    def test_add_product_as_attendant(self):
+        with self.app.app_context():
+            token = create_access_token('attendant')
+            headers = {'Authorization': f'Bearer {token}'}
+            response = self.test_client.post(
+                '/api/v2/product',
+                headers=headers,
+                content_type='application/json'
+            )
+            return(response.status)
+       
+    
+    def test_fetch_products(self):
+        response = self.test_client.get( 
+            '/api/v2/products', data=json.dumps(self.request_data), content_type = 'application/json')
+        self.assertEqual(response.status_code,404)
+        self.assertIn("There are no products", str(response.data))
+
+    def test_fetch_single_product(self):    
+        with self.app.app_context():
+            token = create_access_token('admin')
+            headers={'Authorization':f'Bearer {token}'}
+            response = self.test_client.post(
+                '/api/v2/products',
+                headers=headers,
+                content_type='application/json')
+            return(response.status)       
         
+        response = self.test_client.post('/api/v1/products/1',
+                            content_type='application/json',
+                            data=json.dumps(self.request_data)
+                            )      
+        self.assertEqual(response.status_code,200)
+        self.assertIn("You have fetched product",str(response.data))
 
 if __name__ == "__main__":
     unittest.main()

@@ -17,7 +17,7 @@ product = Blueprint("product",__name__)
 def add_products():
     db = Databasehandler()
     current_user = get_jwt_identity()
-    if current_user == 'Owner':
+    if current_user == 'admin':
         request_data=request.get_json()
         product_name= request_data.get('product_name')
         unit_price = request_data.get('unit_price')
@@ -55,7 +55,7 @@ def fetch_products():
     if len(products)>=1:
         return jsonify({
             "message":'Available products',
-            "products":products
+            "product":products
         }),200
 
 @product.route('/api/v2/products/<int:product_id>',methods=['GET'])
@@ -69,7 +69,7 @@ def remove_product(product_id):
     db = Databasehandler()
     db.delete_product(product_id)
     return jsonify({
-        "message":"You have deleted product"
+        "message":"You have deleted product",
     })
 
 @product.route('/api/v2/products/<int:product_id>', methods=['PUT'])

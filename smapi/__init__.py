@@ -22,9 +22,10 @@ def create_app(mode):
     return app
 
 app=create_app(mode='testing')
-db = Databasehandler()
+# db = Databasehandler()
 
 # from .views import auth_views,sale_views,product_views
 
 if __name__ =='__main__':
     app.run()
+    

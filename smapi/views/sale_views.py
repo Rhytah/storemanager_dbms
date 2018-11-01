@@ -14,7 +14,7 @@ def add_sale_order():
     current_user = get_jwt_identity()
     entered_by = current_user
     sale_data= request.get_json()
-    if current_user == 'attendant':
+    if current_user == entered_by:
         product_name=sale_data['product_name']
         unit_price = sale_data['unit_price']
         quantity = sale_data['quantity']
@@ -32,7 +32,7 @@ def fetch_sales():
     if len(sales)<1:
         return jsonify({
             "status":'Fail',
-            "message":'There are no products'
+            "message":'There are no sale orders'
         }),404
 
     if len(sales)>=1:
