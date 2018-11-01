@@ -44,7 +44,7 @@ $pytest --cov       -check test coverage for pytests
 ```
 ## Versioning
 ```
-This is version one"v2" of the API
+This is version two "v2" of the API
 ```
 ## End Points(Required Features)
 |           End Point                                 |            Functionality                   |
