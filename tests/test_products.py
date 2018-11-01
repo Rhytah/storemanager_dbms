@@ -76,7 +76,7 @@ class ProductTestCase(unittest.TestCase):
     def test_fetch_products(self):
         response = self.test_client.get( 
             '/api/v2/products', data=json.dumps(self.request_data), content_type = 'application/json')
-        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.status_code,404)
         
 
     def test_fetch_single_product(self):    
