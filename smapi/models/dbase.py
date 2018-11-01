@@ -12,15 +12,6 @@ class Databasehandler:
         self.conn =psycopg2.connect(dbname="test_db", user="postgres", host="localhost", password="")
         self.cursor=self.conn.cursor()
         self.conn.autocommit = True
-        
-        
-            
-        # if app.config.get('ENV') == 'testing':
-        #     print(app.config.get('DATABASE_URI'))
-            # dbname = app_configuration['testing'].DATABASE
-            # self.conn['dbname'] = dbname
-        
-    # def connect(self):
     
         try:
             
@@ -31,7 +22,6 @@ class Databasehandler:
             connection_credentials1="""
                     dbname='test_db' user= 'postgres' host='localhost' 
                     """
-                # self.conn['dbname'] = dbname
                 
             if app.config.get('ENV') == 'development':
                 print(app.config.get('DATABASE_URI'))
@@ -52,7 +42,6 @@ class Databasehandler:
             print("Connection failed")
 
 
-    # def create_tables(self):
         usercmd="CREATE TABLE IF NOT EXISTS users(user_id SERIAL PRIMARY KEY,username VARCHAR (30),password VARCHAR (10),role BOOLEAN DEFAULT FALSE NOT NULL)"
         self.cursor.execute(usercmd)
     
