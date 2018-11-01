@@ -77,24 +77,11 @@ class ProductTestCase(unittest.TestCase):
         response = self.test_client.get( 
             '/api/v2/products', data=json.dumps(self.request_data), content_type = 'application/json')
         self.assertEqual(response.status_code,404)
-        self.assertIn("There are no products", str(response.data))
+        
 
     def test_fetch_single_product(self):    
-        with self.app.app_context():
-            token = create_access_token('admin')
-            headers={'Authorization':f'Bearer {token}'}
-            response = self.test_client.post(
-                '/api/v2/products',
-                headers=headers,
-                content_type='application/json')
-            return(response.status)       
-        
-        response = self.test_client.post('/api/v1/products/1',
+        response = self.test_client.get('/api/v2/products/1',
                             content_type='application/json',
-                            data=json.dumps(self.request_data)
+                            data=json.dumps(self.samplepdt)
                             )      
         self.assertEqual(response.status_code,200)
-        self.assertIn("You have fetched product",str(response.data))
-
-if __name__ == "__main__":
-    unittest.main()

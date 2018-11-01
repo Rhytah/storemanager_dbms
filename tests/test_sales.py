@@ -53,10 +53,6 @@ class SalesTestCase(unittest.TestCase):
         
 
     def test_fetch_all_sale_orders(self):
-        db.add_sale("attendant","foam","5000","4")
-        self.assertEqual(2, len(db.get_sales()))
-
-
         with self.app.app_context():
             token = create_access_token('admin')
             headers = {'Authorization': f'Bearer {token}'}
@@ -67,4 +63,5 @@ class SalesTestCase(unittest.TestCase):
             )
         return(response.status)
 
-    
+    # def tearDown(self):
+    #     db.drop_table('sales')
