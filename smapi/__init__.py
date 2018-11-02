@@ -23,5 +23,3 @@ def create_app(mode):
 
 app=create_app(mode='development')
 db = Databasehandler()
-
-# from .views import auth_views,sale_views,product_views

@@ -76,7 +76,7 @@ class SalesTestCase(unittest.TestCase):
                 data=self.badsaledata
             )
             return(response.status)
-        self.assertIn("",str(response.data))
+        # self.assertIn("",str(response.data))
 
     # def tearDown(self):
     #     db.drop_table('sales')

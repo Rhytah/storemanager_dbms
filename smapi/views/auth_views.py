@@ -1,5 +1,4 @@
 from flask import Flask, json, jsonify, request,Blueprint, current_app as app
-from smapi.models.user_model import User
 
 from flask_jwt_extended import (JWTManager,create_access_token,
                                 get_jwt_identity, jwt_required)
@@ -51,21 +50,13 @@ def signup():
         username=user_data['username']
         password=user_data['password']
         user=db.search_user(username)
-        if username==user.get('username'):
-            return jsonify({"message":"user already exists"})
-        if not username:
-            return "username is missing"
-        if username == " ":
-            return "username is missing"
-        if not re.match(r"^([a-zA-Z]+[-_\s])*[a-zA-Z]+$", username):
-            return "username must have no white spaces"
-           
-        if len(username) < 5:
-            return "username should be more than 4 characters long"
-    
+        invalid_user=validate.user_validate(username, password)
+        if invalid_user:
+            return jsonify({"message":invalid_user})
+         
         db.add_user(username,password)
-        return jsonify({"message":f"-{username}- successfully added, to use password -{password}-"})
-    return jsonify({"message":"Only Admin can add users. Contact application administrator"})
+        return jsonify({"message":f"-{username}- successfully added, to use password -{password}-"}),200
+    return jsonify({"message":"Only Admin can add users. Contact application administrator"}),400
 
 @auth.route('/api/v2/auth/users', methods=['GET'])
 @jwt_required
@@ -95,10 +86,9 @@ def assign_admin_rights(user_id):
     user_data=request.get_json()
     role = user_data['role']
     if current_user == 'true':
-        
         db.promote_user(user_id,role)
-        return jsonify({"message":f"You have promoted user to admin status"})
-    return jsonify({"Auth Failure":"Log in as Admin to promote users"})
+        return jsonify({"message":f"You have promoted user to admin status"}),200
+    return jsonify({"Auth Failure":"Log in as Admin to promote users"}),401
 
 @auth.route('/api/v2/protected', methods =['GET'])
 @jwt_required

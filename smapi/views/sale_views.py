@@ -1,7 +1,6 @@
 from flask import Flask, Request, json, jsonify, request,Blueprint,current_app as app
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from smapi.models.sales_model import Sale
-from smapi.models.user_model import User
+
 from smapi.models.dbase import Databasehandler
 from smapi.views.vatlidators import Validation
 
@@ -21,10 +20,10 @@ def add_sale_order():
     quantity = sale_data['quantity']
     total = sale_data['total']
     
-    invalid=validator.sale_validate(product_id,entered_by,quantity)
+    invalid_sale=validator.sale_validate(product_id,entered_by,quantity)
     if current_user == 'false':
-        if invalid:
-            return jsonify({"message": invalid}), 400
+        if invalid_sale:
+            return jsonify({"message": invalid_sale}), 400
         db.get_a_pdt(product_id) 
         db.create_saleorder(product_id,entered_by,cost,quantity,total)
         return jsonify({'You have sold':f'{quantity} of {product_id}'})
@@ -50,4 +49,4 @@ def fetch_sales():
 def fetch_a_single_sale(sale_id):
     db = Databasehandler()
     sale=db.get_a_sale(sale_id)
-    return jsonify({'Sale order':sale})
+    return jsonify({'Sale order':sale}),200

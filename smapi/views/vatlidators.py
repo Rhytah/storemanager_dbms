@@ -2,7 +2,7 @@ import re
 
 class Validation:
 
-    def user_validate(self, username, password,role):
+    def user_validate(self, username, password):
         if not username:
             return "usename is missing"
         if username == " ":
@@ -10,8 +10,8 @@ class Validation:
         if not re.match(r"^([a-zA-Z\d]+[-_])*[a-zA-Z\d*]+$", username):
             return "username must have no white spaces"
 
-        if (role != "true" and role != "false"):
-            return "role should either be true for admin-user  or false for attendant-user"    
+        # if (role != "true" and role != "false"):
+        #     return "role should either be true for admin-user  or false for attendant-user"    
         if len(username) < 4:
             return "username should be more than 4 characters long"
         if not password:

@@ -10,10 +10,10 @@ class Databasehandler:
     
     def __init__(self):
         
-        self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="")
+        self.conn =psycopg2.connect(dbname="test_db", user="postgres", host="localhost", password="")
         self.cursor=self.conn.cursor(cursor_factory=RealDictCursor)
         self.conn.autocommit = True
-    # def startdb(self):
+    
         try:
             
             connection_credentials= """
@@ -169,33 +169,9 @@ class Databasehandler:
             return result
         return {"Key-Error": "Product you are trying to sell is unavailable. Enter valid Product Id"}
 
-    def add_sale(self,product_id,entered_by,cost,quantity,total):
-        product_query = f"""
-            SELECT * from products
-            WHERE product_id = {product_id} """
-        self.cursor.execute(product_query)
-        returned_product =self.cursor.fetchone()
-
-        sale_query = f"""
-            INSERT INTO sales (product_id,entered_by, cost,quantity, total)
-            VALUES (, {product_id}, {entered_by},{quantity}, {total})
-        """
-        total = (quantity * returned_product['unit_price'])
-        new_stock = (returned_product['stock'] - ['quantity'])
-
-        update_stock = f"""
-        UPDATE products SET quantity={new_stock}
-        WHERE product_id={product_id}
-        """        
-        self.cursor.execute(update_stock)
-        self.cursor.execute(sale_query)
-
-        response = {'message':'Sales record saved successfully'}
-        return response
         
         
     def update_product(self, product_id,product_name, unit_price, stock):
-        #function to update product
         try:
             query = ("""UPDATE products SET product_name = '{}', unit_price = '{}', stock = '{}'  where product_id = '{}'""" .format(
                 product_name, unit_price, stock, product_id,))
@@ -207,5 +183,3 @@ class Databasehandler:
                 return False   
         except:
             return False
-        
-    

@@ -124,28 +124,6 @@ class AuthTestCase(unittest.TestCase):
                 data=json.dumps(sdata),
                 content_type='application/json')
             return(response.status)
-    def fetch_users(self):
-        sdata={
-            "username":"charly",
-            "password":"password"
-        }
-        with self.app.app_context():
-            token = create_access_token('true')
-            headers={'Authorization':f'Bearer {token}'}
-
-            response = self.test_client.post(
-                '/api/v2/auth/signup',
-                headers=headers,
-                data=json.dumps(sdata),
-                content_type='application/json')
-            return(response.status)
-        response = self.test_client.get('/api/v2/auth/users',
-                                    data=json.dumps(self.auth_data),
-                                    content_type='application/json'
-                                    )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Store staff",  str(response.data))
-
 
 
     # def tearDown(self):
