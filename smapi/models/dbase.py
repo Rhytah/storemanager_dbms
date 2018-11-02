@@ -5,14 +5,15 @@ from psycopg2.extras import RealDictCursor
 from flask import current_app as app
 
 
+
 class Databasehandler:
     
     def __init__(self):
         
-        self.conn =psycopg2.connect(dbname="test_db", user="postgres", host="localhost", password="")
-        self.cursor=self.conn.cursor()
+        self.conn =psycopg2.connect(dbname="store_db", user="postgres", host="localhost", password="")
+        self.cursor=self.conn.cursor(cursor_factory=RealDictCursor)
         self.conn.autocommit = True
-    
+    # def startdb(self):
         try:
             
             connection_credentials= """
@@ -42,12 +43,27 @@ class Databasehandler:
             print("Connection failed")
 
 
-        usercmd="CREATE TABLE IF NOT EXISTS users(user_id SERIAL PRIMARY KEY,username VARCHAR (30),password VARCHAR (10),role BOOLEAN DEFAULT FALSE NOT NULL)"
+        usercmd="""CREATE TABLE IF NOT EXISTS users(
+            user_id SERIAL PRIMARY KEY,
+            username VARCHAR (30),
+            password VARCHAR (10),
+            role BOOLEAN DEFAULT FALSE NOT NULL)"""
         self.cursor.execute(usercmd)
     
-        pdtcmd="CREATE TABLE IF NOT EXISTS products(product_id SERIAL PRIMARY KEY,product_name VARCHAR(20),unit_price INT, category VARCHAR(15))"
+        pdtcmd="""CREATE TABLE IF NOT EXISTS products(
+            product_id SERIAL PRIMARY KEY,
+            product_name VARCHAR(20),
+            unit_price INT,
+            category VARCHAR(15),
+            stock INT)"""
         self.cursor.execute(pdtcmd)
-        salecmd="CREATE TABLE IF NOT EXISTS sales(sale_id SERIAL PRIMARY KEY ,entered_by VARCHAR,product_name VARCHAR (20),unit_price INT,quantity INT)"
+        salecmd="""CREATE TABLE IF NOT EXISTS sales(
+            sale_id SERIAL PRIMARY KEY ,
+            entered_by VARCHAR,
+            product_id INT REFERENCES products (product_id),
+            cost INT,
+            quantity INT,
+            total INT)"""
         self.cursor.execute(salecmd)
         adminuser=f"""
                 INSERT INTO users(username, password, role)
@@ -56,12 +72,6 @@ class Databasehandler:
         self.cursor.execute(adminuser)
 
 
-    def get_by_argument(self, table, column_name,argument):
-        query = "SELECT * FROM {} WHERE {} = '{}';".format(table, column_name, argument)
-        self.cursor = self.conn.cursor()
-        self.cursor.execute(query)
-        result = self.cursor.fetchone()
-        return result
     def search_user(self,username):
         cmd="SELECT * FROM users WHERE username='{}'".format(username)
         self.cursor.execute(cmd)
@@ -71,13 +81,9 @@ class Databasehandler:
         else:
             return {"message":"User doesn't exist"}
 
-    def add_sale(self,entered_by,product_name,unit_price,quantity):
-        cmd="INSERT INTO sales(entered_by,product_name,unit_price,quantity) VALUES ('{}','{}','{}','{}');".format(entered_by,product_name,unit_price,quantity)
-        
-        self.cursor.execute(cmd)
 
-    def add_pdt(self,product_name,unit_price):
-        cmd="INSERT INTO products(product_name,unit_price) VALUES ('{}','{}');".format(product_name,unit_price)
+    def add_pdt(self,product_name,unit_price,category,stock):
+        cmd="INSERT INTO products(product_name,unit_price,category,stock) VALUES ('{}','{}','{}','{}');".format(product_name,unit_price,category,stock)
         self.cursor.execute(cmd)
 
 
@@ -105,7 +111,7 @@ class Databasehandler:
         
     def get_a_sale(self,sale_id):
         sale= None
-        cmd="SELECT entered_by,product_name,unit_price,quantity FROM sales WHERE sale_id = {};".format(sale_id) 
+        cmd="SELECT * FROM sales WHERE sale_id = {};".format(sale_id) 
         self.cursor.execute(cmd)
         sale =self.cursor.fetchone()
 
@@ -136,14 +142,70 @@ class Databasehandler:
         cmd="""INSERT INTO users(username,password) 
         VALUES ('{}','{}');""".format(username,password)
         self.cursor.execute(cmd)
-    
+
+    def promote_user(self,user_id,role):
+        cmd= "UPDATE users SET role = '{}' WHERE user_id= '{}';".format(role,user_id)
+        updated_rows = 0    
+        self.cursor.execute(cmd)
+        updated_rows = self.cursor.rowcount
+        return updated_rows
+
     def get_users(self):
         usercmd ="SELECT * FROM users;"    
         self.cursor.execute(usercmd)
         users = self.cursor.fetchall()
         return users
 
-    def drop_table(self, *table_names):
-        for table_name in table_names:
-            drop_table = "DROP TABLE IF EXISTS {} CASCADE".format(table_name)
-            self.cursor.execute(drop_table)
+    def drop_table(self,table_name):        
+        drop_table = "DROP TABLE IF EXISTS {} CASCADE".format(table_name)
+        result=self.cursor.execute(drop_table)
+        return result
+
+    def create_saleorder(self,product_id,entered_by,cost,quantity,total):
+        sql = "INSERT INTO sales(product_id,entered_by,cost,quantity,total) \
+            VALUES ('{}','{}','{}','{}',{})".format(product_id,entered_by,cost,quantity,total)
+        result= self.cursor.execute(sql)
+        if result:
+            return result
+        return {"Key-Error": "Product you are trying to sell is unavailable. Enter valid Product Id"}
+
+    def add_sale(self,product_id,entered_by,cost,quantity,total):
+        product_query = f"""
+            SELECT * from products
+            WHERE product_id = {product_id} """
+        self.cursor.execute(product_query)
+        returned_product =self.cursor.fetchone()
+
+        sale_query = f"""
+            INSERT INTO sales (product_id,entered_by, cost,quantity, total)
+            VALUES (, {product_id}, {entered_by},{quantity}, {total})
+        """
+        total = (quantity * returned_product['unit_price'])
+        new_stock = (returned_product['stock'] - ['quantity'])
+
+        update_stock = f"""
+        UPDATE products SET quantity={new_stock}
+        WHERE product_id={product_id}
+        """        
+        self.cursor.execute(update_stock)
+        self.cursor.execute(sale_query)
+
+        response = {'message':'Sales record saved successfully'}
+        return response
+        
+        
+    def update_product(self, product_id,product_name, unit_price, stock):
+        #function to update product
+        try:
+            query = ("""UPDATE products SET product_name = '{}', unit_price = '{}', stock = '{}'  where product_id = '{}'""" .format(
+                product_name, unit_price, stock, product_id,))
+            self.cursor.execute(query)
+            count = self.cursor.rowcount
+            if int(count) > 0:
+                return True
+            else:
+                return False   
+        except:
+            return False
+        
+    

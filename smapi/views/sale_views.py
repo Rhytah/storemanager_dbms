@@ -3,25 +3,31 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from smapi.models.sales_model import Sale
 from smapi.models.user_model import User
 from smapi.models.dbase import Databasehandler
+from smapi.views.vatlidators import Validation
 
 sale = Blueprint("sale",__name__)
 
+validator=Validation()
 
 @sale.route('/api/v2/sales',methods=['POST'])
 @jwt_required
 def add_sale_order():
     db = Databasehandler()
     current_user = get_jwt_identity()
-    entered_by = current_user
-    sale_data= request.get_json()
-    if current_user == entered_by:
-        product_name=sale_data['product_name']
-        unit_price = sale_data['unit_price']
-        quantity = sale_data['quantity']
-
-        db.add_sale(entered_by,product_name,unit_price,quantity) 
-        
-        return jsonify({'message':'sale_order has been posted'})
+    sale_data = request.get_json()
+    product_id= sale_data['product_id']
+    entered_by = sale_data['entered_by']
+    cost = sale_data['cost']
+    quantity = sale_data['quantity']
+    total = sale_data['total']
+    
+    invalid=validator.sale_validate(product_id,entered_by,quantity)
+    if current_user == 'false':
+        if invalid:
+            return jsonify({"message": invalid}), 400
+        db.get_a_pdt(product_id) 
+        db.create_saleorder(product_id,entered_by,cost,quantity,total)
+        return jsonify({'You have sold':f'{quantity} of {product_id}'})
     return jsonify({"message":"Access denied, Log in as attendant to add sale orders."}), 401
 
 

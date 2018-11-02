@@ -7,8 +7,11 @@ from smapi.models.product_model import Product
 from smapi.models.user_model import User
 
 import re
+from smapi.views.vatlidators import Validation
+
 product = Blueprint("product",__name__)
 
+validator=Validation()
 
 
 
@@ -21,24 +24,13 @@ def add_products():
         request_data=request.get_json()
         product_name= request_data.get('product_name')
         unit_price = request_data.get('unit_price')
-
-        if not product_name:
-            return "Product Name is missing"
-        if product_name == " ":
-            return "Product Name is missing"
-        if not re.match(r"^([a-zA-Z]+[-_\s])*[a-zA-Z]+$", product_name):
-            return "product name must have no white spaces"
-        if not re.match(r"^[0-9]*$", unit_price):
-            return "Product price must be only digits and must have no white spaces"    
-        if len(product_name) < 3:
-            return "product name should be more than 4 characters long"
-        if not unit_price:
-            return "Product price is missing"
-        if int(unit_price) < 1:
-            return "Product price should be greater than zero"    
-        if unit_price == " ":
-            return "Product price is missing"    
-        db.add_pdt(product_name,unit_price)
+        category = request_data.get('category')
+        stock = request_data.get('stock')
+        invalid=validator.product_validate(product_name,unit_price,category,stock)
+        if invalid:
+            return jsonify({"message": invalid}), 400 
+            
+        db.add_pdt(product_name,unit_price,category,stock)
         return jsonify({"message":"Product successfully added"})
     return jsonify({"message":"Access denied, Log in as admin to add Products"}), 401
 
@@ -76,6 +68,11 @@ def remove_product(product_id):
 def modify_product(product_id):
     db = Databasehandler()
     request_data=request.get_json()
+    product_name = request_data['product_name']
     unit_price=request_data['unit_price']
-    db.modify_product(unit_price, product_id)
+    stock = request_data['stock']
+    invalid=validator.product_mod(product_name,unit_price,stock)
+    if invalid:
+        return jsonify({"message": invalid}), 400 
+    db.update_product(product_id,product_name, unit_price, stock)
     return jsonify({"message":"Successfully updated product"})

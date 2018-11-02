@@ -16,17 +16,22 @@ class SalesTestCase(unittest.TestCase):
         self.token=''
         self.sale_data={
             "saleId":1,
-            "product_name":"Foam",
-            "unit_price":5000,
-            "quantity":4,
-            "entered_by":"attendant"
-            
+            "product_id":"3",
+            "entered_by":"attendant",
+            "quantity":4,           
         }
+        self.badsaledata={
+            "saleId":1,
+            "product_id":"3",
+            "entered_by":"attendant",
+            "quantity":0, 
+        }
+
         
     def test_add_sale_order(self):
-        db.add_sale("attendant","foam","5000","4")
+        
         with self.app.app_context():
-            token = create_access_token('attendant')
+            token = create_access_token('false')
             headers = {'Authorization': f'Bearer {token}'}
             response = self.test_client.post(
                 '/api/v2/sales',
@@ -37,11 +42,9 @@ class SalesTestCase(unittest.TestCase):
             return(response.status)
         
     def test_fetch_single_sale_order(self):
-        db.add_sale("attendant","foam","5000","4")
-        res=db.get_a_sale(1)
-        self.assertEqual("('attendant', 'foam', 5000, 4)",str(res))
+
         with self.app.app_context():
-            token = create_access_token('attendant')
+            token = create_access_token('false')
             headers = {'Authorization': f'Bearer {token}'}
             response = self.test_client.get(
                 '/api/v2/sales/1',
@@ -50,11 +53,10 @@ class SalesTestCase(unittest.TestCase):
                 data= self.sale_data
             )
             return(response.status)
-        
 
     def test_fetch_all_sale_orders(self):
         with self.app.app_context():
-            token = create_access_token('admin')
+            token = create_access_token('true')
             headers = {'Authorization': f'Bearer {token}'}
             response = self.test_client.get(
                 '/api/v2/sales',
@@ -62,6 +64,19 @@ class SalesTestCase(unittest.TestCase):
                 content_type='application/json'
             )
         return(response.status)
+
+    def test_add_sale_with_wrong_data_types(self):
+        with self.app.app_context():
+            token = create_access_token('false')
+            headers = {'Authorization': f'Bearer {token}'}
+            response = self.test_client.post(
+                '/api/v2/sales',
+                headers=headers,
+                content_type='application/json',
+                data=self.badsaledata
+            )
+            return(response.status)
+        self.assertIn("",str(response.data))
 
     # def tearDown(self):
     #     db.drop_table('sales')

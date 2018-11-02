@@ -6,9 +6,12 @@ from flask_jwt_extended import (JWTManager,create_access_token,
 
 from smapi.models.dbase import Databasehandler
 import re
+from smapi.views.vatlidators import Validation
 
 
 auth = Blueprint("auth",__name__)
+
+validate=Validation()
 
 # db=Databasehandler()
 @auth.route('/')
@@ -23,17 +26,15 @@ def login_user():
     user_data=request.get_json()
     username=user_data['username']
     password=user_data['password']
-    # user=User(userId,username,password,role)
+    role = user_data['role']
     user=db.search_user(username)
-    if not username:
-        return jsonify({"msg" : "Provide Valid Username"}),400
-
-    if not password:
-        return jsonify({"msg" : "Incorrect password"}),400
+    invali =validate.login_credits(username,password,role)
+    if invali:
+        return jsonify({"message": invali}), 400 
 
     if username==user.get('username') and password==user.get('password'):
 
-        access_token= create_access_token(identity=username)
+        access_token= create_access_token(identity=role)
  
         return jsonify({
             "message":f"{username}, successfully logged in ",
@@ -45,7 +46,7 @@ def login_user():
 def signup():
     db = Databasehandler()
     current_user=get_jwt_identity()
-    if current_user == 'admin':
+    if current_user == 'true':
         user_data=request.get_json()
         username=user_data['username']
         password=user_data['password']
@@ -64,14 +65,14 @@ def signup():
     
         db.add_user(username,password)
         return jsonify({"message":f"-{username}- successfully added, to use password -{password}-"})
-    return jsonify({"message":"Only Admin can add users. Contact authlication administrator"})
+    return jsonify({"message":"Only Admin can add users. Contact application administrator"})
 
 @auth.route('/api/v2/auth/users', methods=['GET'])
 @jwt_required
-def fetch_products():
+def fetch_users():
     db = Databasehandler()
     current_user=get_jwt_identity()
-    if current_user == 'admin':
+    if current_user == 'true':
         users= db.get_users()   
         if len(users)<1:
             return jsonify({
@@ -82,8 +83,23 @@ def fetch_products():
         if len(users)>=1:
             return jsonify({
                 "message":'Store staff',
-                "product":users
+                "view":users
             }),200
+    return jsonify({"message":"You are not the Admin"})
+
+@auth.route('/api/v2/auth/users/<int:user_id>', methods=['PUT'])
+@jwt_required
+def assign_admin_rights(user_id):
+    db = Databasehandler()
+    current_user = get_jwt_identity()
+    user_data=request.get_json()
+    role = user_data['role']
+    if current_user == 'true':
+        
+        db.promote_user(user_id,role)
+        return jsonify({"message":f"You have promoted user to admin status"})
+    return jsonify({"Auth Failure":"Log in as Admin to promote users"})
+
 @auth.route('/api/v2/protected', methods =['GET'])
 @jwt_required
 def protected():

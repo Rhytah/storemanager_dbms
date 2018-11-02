@@ -44,7 +44,7 @@ class ProductTestCase(unittest.TestCase):
     
     def test_admin_can_add_product(self): 
         with self.app.app_context():
-            token = create_access_token('admin')
+            token = create_access_token('true')
             headers={'Authorization':f'Bearer {token}'}
 
             response = self.test_client.post(
@@ -63,7 +63,7 @@ class ProductTestCase(unittest.TestCase):
         )
     def test_add_product_as_attendant(self):
         with self.app.app_context():
-            token = create_access_token('attendant')
+            token = create_access_token('false')
             headers = {'Authorization': f'Bearer {token}'}
             response = self.test_client.post(
                 '/api/v2/product',
@@ -76,7 +76,7 @@ class ProductTestCase(unittest.TestCase):
     def test_fetch_products(self):
         response = self.test_client.get( 
             '/api/v2/products', data=json.dumps(self.request_data), content_type = 'application/json')
-        self.assertEqual(response.status_code,404)
+        self.assertEqual(response.status_code,200)
         
 
     def test_fetch_single_product(self):    
@@ -85,3 +85,33 @@ class ProductTestCase(unittest.TestCase):
                             data=json.dumps(self.samplepdt)
                             )      
         self.assertEqual(response.status_code,200)
+
+    def test_remove_pdt(self):
+        with self.app.app_context():
+            token = create_access_token('true')
+            headers = {'Authorization': f'Bearer {token}'}
+            response = self.test_client.delete(
+                '/api/v2/product/1',
+                headers=headers,
+                content_type='application/json',
+                data=self.request_data
+            )
+            return(response.status)
+        self.assertIn("You have deleted product", str(response.data))
+
+    def test_modify_pdt(self):
+        with self.app.app_context():
+            token = create_access_token('true')
+            headers = {'Authorization': f'Bearer {token}'}
+            response = self.test_client.put(
+                '/api/v2/product/1',
+                headers=headers,
+                content_type='application/json'
+            )
+            return(response.status)
+        
+       
+    
+       
+    
+

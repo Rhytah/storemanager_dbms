@@ -1,8 +1,9 @@
-
+from smapi.models.dbase import Databasehandler
+db=Databasehandler()
 class Sale:
-    def __init__(self,sale_id,entered_by,product_name,unit_price,quantity):
+    def __init__(self,sale_id,entered_by,product_id,quantity,total):
         self.sale_id= sale_id
         self.entered_by= entered_by
-        self.product_name = product_name
-        self.unit_price = unit_price
+        self.product_id = product_id
         self.quantity = quantity
+        self.total = total
