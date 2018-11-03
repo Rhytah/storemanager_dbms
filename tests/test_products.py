@@ -98,16 +98,16 @@ class ProductTestCase(unittest.TestCase):
             )
             return(response.status)
 
-    # def test_modify_pdt(self):
-    #     with self.app.app_context():
-    #         token = create_access_token('true')
-    #         headers = {'Authorization': f'Bearer {token}'}
-    #         response = self.test_client.put(
-    #             '/api/v2/product/1',
-    #             headers=headers,
-    #             content_type='application/json'
-    #         )
-    #         return(response.status)
+    def test_modify_pdt(self):
+        with self.app.app_context():
+            token = create_access_token('true')
+            headers = {'Authorization': f'Bearer {token}'}
+            response = self.test_client.put(
+                '/api/v2/product/1',
+                headers=headers,
+                content_type='application/json'
+            )
+            return(response.status)
         
        
     
