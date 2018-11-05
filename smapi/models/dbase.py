@@ -9,13 +9,16 @@ from flask import current_app as app
 class Databasehandler:
     
     def __init__(self):
-        try:
-            
-            connection_credentials= """
+        connection_credentials= """
                     dbname='d6rar6n28cheps' user= 'kpiodmhnflyelp' host='ec2-54-204-14-96.compute-1.amazonaws.com' 
                     port = '5432' password = '140d2cfee29c34864db81150625828ef7eaf980318ff80778d15e764dac3b520'
                     """
             
+        self.conn = psycopg2.connect(connection_credentials)
+        self.conn.autocommit = True
+        self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+        try:
+
             self.conn = psycopg2.connect(connection_credentials)
             self.conn.autocommit = True
             self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
@@ -57,6 +60,7 @@ class Databasehandler:
         except Exception as e:
             print(e)
             print("Connection failed")
+            
     def search_user(self,username):
         cmd="SELECT * FROM users WHERE username='{}'".format(username)
         self.cursor.execute(cmd)
