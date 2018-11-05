@@ -60,7 +60,7 @@ class Databasehandler:
         except Exception as e:
             print(e)
             print("Connection failed")
-            
+
     def search_user(self,username):
         cmd="SELECT * FROM users WHERE username='{}'".format(username)
         self.cursor.execute(cmd)
@@ -74,12 +74,13 @@ class Databasehandler:
     def add_pdt(self,product_name,unit_price,category,stock):
         cmd="INSERT INTO products(product_name,unit_price,category,stock) VALUES ('{}','{}','{}','{}');".format(product_name,unit_price,category,stock)
         self.cursor.execute(cmd)
-
+        self.conn.close()
 
     def get_pdts(self):
         cmd ="SELECT * FROM products;"
         self.cursor.execute(cmd)
         allproducts = self.cursor.fetchall()
+        self.conn.close()
        
         return allproducts
 
@@ -88,6 +89,7 @@ class Databasehandler:
         cmd="SELECT product_name,unit_price FROM products WHERE product_id = {};".format(product_id) 
         self.cursor.execute(cmd)
         product =self.cursor.fetchone()
+        self.conn.close()
         if product is not None:
             return product
         return {"message":"Id non-existent, enter valid product Id"}
@@ -95,6 +97,7 @@ class Databasehandler:
     def get_sales(self):
         cmd ="SELECT * FROM sales;"
         self.cursor.execute(cmd)
+        self.conn.close()
         sales = self.cursor.fetchall()
         return sales
         
@@ -102,6 +105,7 @@ class Databasehandler:
         sale= None
         cmd="SELECT * FROM sales WHERE sale_id = {};".format(sale_id) 
         self.cursor.execute(cmd)
+        self.conn.close()
         sale =self.cursor.fetchone()
 
         if sale is not None:
@@ -113,6 +117,7 @@ class Databasehandler:
         del_cmd="DELETE FROM products WHERE product_id={}".format(product_id)
         dpdt=self.cursor.rowcount
         self.cursor.execute(del_cmd)
+        self.conn.close()
     
         if dpdt is not None:
             return dpdt
@@ -123,6 +128,7 @@ class Databasehandler:
         sql = "UPDATE products SET unit_price = '{}' WHERE product_id = '{}';".format(unit_price,product_id)
         updated_rows = 0    
         self.cursor.execute(sql)
+        self.conn.close()
         updated_rows = self.cursor.rowcount
         self.conn.commit()
         return updated_rows
@@ -131,23 +137,28 @@ class Databasehandler:
         cmd="""INSERT INTO users(username,password) 
         VALUES ('{}','{}');""".format(username,password)
         self.cursor.execute(cmd)
+        self.conn.close()
 
     def promote_user(self,user_id,role):
         cmd= "UPDATE users SET role = '{}' WHERE user_id= '{}';".format(role,user_id)
         updated_rows = 0    
         self.cursor.execute(cmd)
+        self.conn.close()
         updated_rows = self.cursor.rowcount
         return updated_rows
 
     def get_users(self):
         usercmd ="SELECT * FROM users;"    
         self.cursor.execute(usercmd)
+        self.conn.close()
         users = self.cursor.fetchall()
         return users
 
     def drop_table(self,table_name):        
         drop_table = "DROP TABLE IF EXISTS {} CASCADE".format(table_name)
         result=self.cursor.execute(drop_table)
+        self.conn.close()
+
         return result
 
     def create_saleorder(self,product_id,entered_by,cost,quantity,total):
@@ -155,6 +166,8 @@ class Databasehandler:
         sql = "INSERT INTO sales(product_id,entered_by,cost,quantity,total) \
             VALUES ('{}','{}','{}','{}',{})".format(product_id,entered_by,cost,quantity,total)
         result= self.cursor.execute(sql)
+        self.conn.close()
+
         if result:
             return result
         return {"Key-Error": "Product you are trying to sell is unavailable. Enter valid Product Id"}
@@ -166,6 +179,8 @@ class Databasehandler:
             query = ("""UPDATE products SET product_name = '{}', unit_price = '{}', stock = '{}'  where product_id = '{}'""" .format(
                 product_name, unit_price, stock, product_id,))
             self.cursor.execute(query)
+            self.conn.close()
+
             count = self.cursor.rowcount
             if int(count) > 0:
                 return True
