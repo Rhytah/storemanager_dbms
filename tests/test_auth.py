@@ -35,8 +35,7 @@ class AuthTestCase(unittest.TestCase):
             'password': 'password',
             'role': 'true'
         }
-    # def tearDown(self):
-    #     db.drop_table('users')
+
 
     def test_index(self):
         response= self.test_client.get('/', content_type='application/json')
@@ -112,7 +111,8 @@ class AuthTestCase(unittest.TestCase):
     def test_signup_as_admin(self):
         sdata={
             "username":"charly",
-            "password":"password"
+            "password":"password",
+            "role":"false"
         }
         with self.app.app_context():
             token = create_access_token('true')
@@ -124,7 +124,3 @@ class AuthTestCase(unittest.TestCase):
                 data=json.dumps(sdata),
                 content_type='application/json')
             return(response.status)
-
-
-    # def tearDown(self):
-    #     db.drop_table('products')

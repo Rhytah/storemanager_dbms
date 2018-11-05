@@ -33,6 +33,11 @@ class ProductTestCase(unittest.TestCase):
             "productName":"Foam",
             "productPrice":3000
         }
+        self.wrongproduct_data={
+            "product_id":2,
+            "product_name":"  ",
+            "unit_price": "3000"
+        }
         
     def test_add_product(self):
         # db.add_pdt("cupps",30000)
@@ -52,7 +57,19 @@ class ProductTestCase(unittest.TestCase):
                 headers=headers,
                 content_type='application/json')
             return(response.status)
-           
+
+
+    def test_add_product_with_wrong_data(self):
+        with self.app.app_context():
+            token = create_access_token('true')
+            headers={'Authorization':f'Bearer {token}'}
+            response = self.test_client.post(
+            '/api/v2/products',headers=headers,
+            content_type='application/json',
+            data = self.wrongproduct_data)
+            return(response.status)
+            # self.assertIn(response.status_code,400)
+
     def test_add_product_without_token(self):
         response = self.test_client.post(
             '/api/v2/products', data=json.dumps(self.request_data), content_type='application/json'
