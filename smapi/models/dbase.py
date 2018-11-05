@@ -98,8 +98,9 @@ class Databasehandler:
         cmd ="SELECT * FROM sales;"
         self.cursor.execute(cmd)
         sales = self.cursor.fetchall()
-        return sales
         self.conn.close()
+        return sales
+        
 
         
     def get_a_sale(self,sale_id):
@@ -107,11 +108,11 @@ class Databasehandler:
         cmd="SELECT * FROM sales WHERE sale_id = {};".format(sale_id) 
         self.cursor.execute(cmd)
         sale =self.cursor.fetchone()
+        self.conn.close()
 
         if sale is not None:
             return sale
         return {"message":"Id non-existent, enter valid sale Id"}
-        self.conn.close()
 
     def delete_product(self,product_id):
         dpdt=None
