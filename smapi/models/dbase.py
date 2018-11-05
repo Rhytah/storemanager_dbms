@@ -9,69 +9,54 @@ from flask import current_app as app
 class Databasehandler:
     
     def __init__(self):
-        
-        self.conn =psycopg2.connect(dbname="test_db", user="postgres", host="localhost", password="")
-        self.cursor=self.conn.cursor(cursor_factory=RealDictCursor)
-        self.conn.autocommit = True
-    
         try:
             
             connection_credentials= """
-                    dbname='store_db' user= 'postgres' host='localhost' 
+                    dbname='d6rar6n28cheps' user= 'kpiodmhnflyelp' host='ec2-54-204-14-96.compute-1.amazonaws.com' 
+                    port = '5432' password = '140d2cfee29c34864db81150625828ef7eaf980318ff80778d15e764dac3b520'
                     """
             
-            connection_credentials1="""
-                    dbname='test_db' user= 'postgres' host='localhost' 
-                    """
-                
-            if app.config.get('ENV') == 'development':
-                print(app.config.get('DATABASE_URI'))
-                self.conn = psycopg2.connect(connection_credentials)
-                self.conn.autocommit = True
-                self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+            self.conn = psycopg2.connect(connection_credentials)
+            self.conn.autocommit = True
+            self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
             print("\n\n Database Connected\n\n")
-
-            if app.config.get('ENV') == 'testing':
-                print(app.config.get('DATABASE_URI'))
-                self.conn = psycopg2.connect(connection_credentials1)
-                self.conn.autocommit = True
-                self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-                print("\n\n Database Connected\n\n")
                             
+        # except Exception as e:
+        #     print(e)
+        #     print("Connection failed")
+
+    # def create_tables(self):
+            usercmd="""CREATE TABLE IF NOT EXISTS users(
+                user_id SERIAL PRIMARY KEY,
+                username VARCHAR (30),
+                password VARCHAR (10),
+                role BOOLEAN DEFAULT FALSE NOT NULL)"""
+            self.cursor.execute(usercmd)
+        
+            pdtcmd="""CREATE TABLE IF NOT EXISTS products(
+                product_id SERIAL PRIMARY KEY,
+                product_name VARCHAR(20),
+                unit_price INT,
+                category VARCHAR(15),
+                stock INT)"""
+            self.cursor.execute(pdtcmd)
+            salecmd="""CREATE TABLE IF NOT EXISTS sales(
+                sale_id SERIAL PRIMARY KEY ,
+                entered_by VARCHAR,
+                product_id INT REFERENCES products (product_id),
+                cost INT,
+                quantity INT,
+                total INT)"""
+            self.cursor.execute(salecmd)
+            adminuser=f"""
+                    INSERT INTO users(username, password, role)
+                    VALUES('admin','admin' ,TRUE)
+                    """
+            self.cursor.execute(adminuser)
+
         except Exception as e:
             print(e)
             print("Connection failed")
-
-
-        usercmd="""CREATE TABLE IF NOT EXISTS users(
-            user_id SERIAL PRIMARY KEY,
-            username VARCHAR (30),
-            password VARCHAR (10),
-            role BOOLEAN DEFAULT FALSE NOT NULL)"""
-        self.cursor.execute(usercmd)
-    
-        pdtcmd="""CREATE TABLE IF NOT EXISTS products(
-            product_id SERIAL PRIMARY KEY,
-            product_name VARCHAR(20),
-            unit_price INT,
-            category VARCHAR(15),
-            stock INT)"""
-        self.cursor.execute(pdtcmd)
-        salecmd="""CREATE TABLE IF NOT EXISTS sales(
-            sale_id SERIAL PRIMARY KEY ,
-            entered_by VARCHAR,
-            product_id INT REFERENCES products (product_id),
-            cost INT,
-            quantity INT,
-            total INT)"""
-        self.cursor.execute(salecmd)
-        adminuser=f"""
-                INSERT INTO users(username, password, role)
-                VALUES('admin','admin' ,TRUE)
-                """
-        self.cursor.execute(adminuser)
-
-
     def search_user(self,username):
         cmd="SELECT * FROM users WHERE username='{}'".format(username)
         self.cursor.execute(cmd)
@@ -120,12 +105,12 @@ class Databasehandler:
         return {"message":"Id non-existent, enter valid sale Id"}
 
     def delete_product(self,product_id):
-        # dpdt=None
+        dpdt=None
         del_cmd="DELETE FROM products WHERE product_id={}".format(product_id)
         dpdt=self.cursor.rowcount
         self.cursor.execute(del_cmd)
     
-        if dpdt:
+        if dpdt is not None:
             return dpdt
         else:
             return {"message":"Product doesn't exist"}
@@ -162,6 +147,7 @@ class Databasehandler:
         return result
 
     def create_saleorder(self,product_id,entered_by,cost,quantity,total):
+        
         sql = "INSERT INTO sales(product_id,entered_by,cost,quantity,total) \
             VALUES ('{}','{}','{}','{}',{})".format(product_id,entered_by,cost,quantity,total)
         result= self.cursor.execute(sql)
