@@ -109,11 +109,7 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertIn("Missing Authorization Header",  str(response.data))
     def test_signup_as_admin(self):
-        sdata={
-            "username":"charly",
-            "password":"password",
-            "role":"false"
-        }
+        
         with self.app.app_context():
             token = create_access_token('true')
             headers={'Authorization':f'Bearer {token}'}
@@ -121,7 +117,7 @@ class AuthTestCase(unittest.TestCase):
             response = self.test_client.post(
                 '/api/v2/auth/signup',
                 headers=headers,
-                data=json.dumps(sdata),
+                data=json.dumps({"username":"charly","password":"password","role":"false"}),
                 content_type='application/json')
             return(response.status)
 
