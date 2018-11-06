@@ -85,7 +85,7 @@ class Databasehandler:
         cmd ="SELECT * FROM sales;"
         self.cursor.execute(cmd)
         sales = self.cursor.fetchall()
-        self.conn.close()
+        # self.conn.close()
         return sales
         
         
@@ -94,7 +94,7 @@ class Databasehandler:
         cmd="SELECT * FROM sales WHERE sale_id = {};".format(sale_id) 
         self.cursor.execute(cmd)
         sale =self.cursor.fetchone()
-        self.conn.close()
+        # self.conn.close()
         if sale is not None:
             return sale
         return {"message":"Id non-existent, enter valid sale Id"}
@@ -104,7 +104,7 @@ class Databasehandler:
         del_cmd="DELETE FROM products WHERE product_id={}".format(product_id)
         dpdt=self.cursor.rowcount
         self.cursor.execute(del_cmd)
-        self.conn.close()    
+        # self.conn.close()    
         if dpdt is not None:
             return dpdt
         else:
@@ -114,10 +114,9 @@ class Databasehandler:
         sql = "UPDATE products SET unit_price = '{}' WHERE product_id = '{}';".format(unit_price,product_id)
         updated_rows = 0    
         self.cursor.execute(sql)
-        
         updated_rows = self.cursor.rowcount
         self.conn.commit()
-        self.conn.close()
+        # self.conn.close()
         return updated_rows
 
     def add_user(self,username,password):
@@ -152,7 +151,7 @@ class Databasehandler:
         sql = "INSERT INTO sales(product_id,entered_by,cost,quantity,total) \
             VALUES ('{}','{}','{}','{}',{})".format(product_id,entered_by,cost,quantity,total)
         result= self.cursor.execute(sql)
-        self.conn.close()
+        # self.conn.close()
         if result:
             return result
         return {"Key-Error": "Product you are trying to sell is unavailable. Enter valid Product Id"}
@@ -164,7 +163,7 @@ class Databasehandler:
             query = ("""UPDATE products SET product_name = '{}', unit_price = '{}', stock = '{}'  where product_id = '{}'""" .format(
                 product_name, unit_price, stock, product_id,))
             self.cursor.execute(query)
-            self.conn.close()
+            # self.conn.close()
             count = self.cursor.rowcount
             if int(count) > 0:
                 return True
