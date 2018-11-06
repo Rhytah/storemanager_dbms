@@ -23,12 +23,7 @@ class Databasehandler:
             self.conn.autocommit = True
             self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
             print("\n\n Database Connected\n\n")
-                            
-        # except Exception as e:
-        #     print(e)
-        #     print("Connection failed")
-
-    # def create_tables(self):
+     
             usercmd="""CREATE TABLE IF NOT EXISTS users(
                 user_id SERIAL PRIMARY KEY,
                 username VARCHAR (30),
@@ -101,7 +96,6 @@ class Databasehandler:
         self.conn.close()
         return sales
         
-
         
     def get_a_sale(self,sale_id):
         sale= None

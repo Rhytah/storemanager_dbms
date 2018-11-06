@@ -124,3 +124,7 @@ class AuthTestCase(unittest.TestCase):
                 data=json.dumps(sdata),
                 content_type='application/json')
             return(response.status)
+
+    def tearDown(self):
+        self.db.drop_table('users')
+             
