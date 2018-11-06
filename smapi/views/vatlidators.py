@@ -3,10 +3,9 @@ import re
 class Validation:
 
     def user_validate(self, username, password,role):
-        if not username:
+        if not username or username == " ":
             return "usename is missing"
-        if username == " ":
-            return "username is missing"
+
         if not re.match(r"^([a-zA-Z\d]+[-_])*[a-zA-Z\d*]+$", username):
             return "username must have no white spaces"
 
