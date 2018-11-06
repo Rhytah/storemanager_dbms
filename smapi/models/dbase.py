@@ -123,7 +123,7 @@ class Databasehandler:
         cmd="""INSERT INTO users(username,password) 
         VALUES ('{}','{}');""".format(username,password)
         self.cursor.execute(cmd)
-        self.conn.close()
+        # self.conn.close()
 
     def promote_user(self,user_id,role):
         cmd= "UPDATE users SET role = '{}' WHERE user_id= '{}';".format(role,user_id)
