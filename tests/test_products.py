@@ -148,8 +148,8 @@ class ProductTestCase(unittest.TestCase):
             self.assertEqual(response.status_code,400)
             self.assertTrue("unit_price is missing",str(response.data))
             
-    # def tearDown(self):
-    #     self.db.drop_table('products')
+    def tearDown(self):
+        self.db.drop_table('products')
     
        
     

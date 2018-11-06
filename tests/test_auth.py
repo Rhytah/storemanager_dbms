@@ -125,6 +125,6 @@ class AuthTestCase(unittest.TestCase):
                 content_type='application/json')
             return(response.status)
 
-    # def tearDown(self):
-    #     self.db.drop_table('users')
+    def tearDown(self):
+        self.db.drop_table('users')
              
