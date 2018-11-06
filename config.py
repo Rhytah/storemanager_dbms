@@ -24,6 +24,7 @@ class TestingConfig(Config):
     ENV = 'testing'
     DATABASE_URI= 'postgresql://localhost/test_db'
     TESTING = True
+    
 
 app_configuration = {
     "development":DevelopmentConfig,

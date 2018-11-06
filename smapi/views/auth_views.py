@@ -27,11 +27,15 @@ def login_user():
     password=user_data['password']
     role = user_data['role']
     user=db.search_user(username)
-    invali =validate.login_credits(username,password,role)
-    if invali:
-        return jsonify({"message": invali}), 400 
+    # if role!= user.get('role'):
+    #     return jsonify({"message":"Enter valid role"}),400
+    invalid_user =validate.login_credits(username,password,role)
+    if invalid_user:
+        return jsonify({"message": invalid_user}), 400 
 
     if username==user.get('username') and password==user.get('password'):
+    # if (username,password)==user.get('username','password'):
+
 
         access_token= create_access_token(identity=role)
  
@@ -49,8 +53,9 @@ def signup():
         user_data=request.get_json()
         username=user_data['username']
         password=user_data['password']
+        role = user_data['role']
         user=db.search_user(username)
-        invalid_user=validate.user_validate(username, password)
+        invalid_user=validate.user_validate(username, password,role)
         if invalid_user:
             return jsonify({"message":invalid_user})
          

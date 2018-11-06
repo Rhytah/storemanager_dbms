@@ -9,40 +9,16 @@ from flask import current_app as app
 class Databasehandler:
     
     def __init__(self):
-        
-        self.conn =psycopg2.connect(dbname="test_db", user="postgres", host="localhost", password="")
-        self.cursor=self.conn.cursor(cursor_factory=RealDictCursor)
+        connection_credentials= """
+                    dbname='d6rar6n28cheps' user= 'kpiodmhnflyelp' host='ec2-54-204-14-96.compute-1.amazonaws.com' 
+                    port = '5432' password = '140d2cfee29c34864db81150625828ef7eaf980318ff80778d15e764dac3b520'
+                    """
+            
+        self.conn = psycopg2.connect(connection_credentials)
         self.conn.autocommit = True
-    
-        try:
-            
-            connection_credentials= """
-                    dbname='store_db' user= 'postgres' host='localhost' 
-                    """
-            
-            connection_credentials1="""
-                    dbname='test_db' user= 'postgres' host='localhost' 
-                    """
-                
-            if app.config.get('ENV') == 'development':
-                print(app.config.get('DATABASE_URI'))
-                self.conn = psycopg2.connect(connection_credentials)
-                self.conn.autocommit = True
-                self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-            print("\n\n Database Connected\n\n")
-
-            if app.config.get('ENV') == 'testing':
-                print(app.config.get('DATABASE_URI'))
-                self.conn = psycopg2.connect(connection_credentials1)
-                self.conn.autocommit = True
-                self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-                print("\n\n Database Connected\n\n")
-                            
-        except Exception as e:
-            print(e)
-            print("Connection failed")
-
-
+        self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+        print("\n\n Database Connected\n\n")
+     
         usercmd="""CREATE TABLE IF NOT EXISTS users(
             user_id SERIAL PRIMARY KEY,
             username VARCHAR (30),
@@ -86,12 +62,10 @@ class Databasehandler:
         cmd="INSERT INTO products(product_name,unit_price,category,stock) VALUES ('{}','{}','{}','{}');".format(product_name,unit_price,category,stock)
         self.cursor.execute(cmd)
 
-
     def get_pdts(self):
         cmd ="SELECT * FROM products;"
         self.cursor.execute(cmd)
         allproducts = self.cursor.fetchall()
-       
         return allproducts
 
     def get_a_pdt(self,product_id):
@@ -109,23 +83,24 @@ class Databasehandler:
         sales = self.cursor.fetchall()
         return sales
         
+        
     def get_a_sale(self,sale_id):
         sale= None
         cmd="SELECT * FROM sales WHERE sale_id = {};".format(sale_id) 
         self.cursor.execute(cmd)
         sale =self.cursor.fetchone()
-
+        
         if sale is not None:
             return sale
         return {"message":"Id non-existent, enter valid sale Id"}
 
     def delete_product(self,product_id):
-        # dpdt=None
+        dpdt=None
         del_cmd="DELETE FROM products WHERE product_id={}".format(product_id)
         dpdt=self.cursor.rowcount
         self.cursor.execute(del_cmd)
-    
-        if dpdt:
+            
+        if dpdt is not None:
             return dpdt
         else:
             return {"message":"Product doesn't exist"}
@@ -134,6 +109,7 @@ class Databasehandler:
         sql = "UPDATE products SET unit_price = '{}' WHERE product_id = '{}';".format(unit_price,product_id)
         updated_rows = 0    
         self.cursor.execute(sql)
+        
         updated_rows = self.cursor.rowcount
         self.conn.commit()
         return updated_rows
@@ -142,29 +118,37 @@ class Databasehandler:
         cmd="""INSERT INTO users(username,password) 
         VALUES ('{}','{}');""".format(username,password)
         self.cursor.execute(cmd)
+        
 
     def promote_user(self,user_id,role):
         cmd= "UPDATE users SET role = '{}' WHERE user_id= '{}';".format(role,user_id)
         updated_rows = 0    
         self.cursor.execute(cmd)
+        
         updated_rows = self.cursor.rowcount
         return updated_rows
 
     def get_users(self):
         usercmd ="SELECT * FROM users;"    
         self.cursor.execute(usercmd)
+        
         users = self.cursor.fetchall()
         return users
 
     def drop_table(self,table_name):        
         drop_table = "DROP TABLE IF EXISTS {} CASCADE".format(table_name)
         result=self.cursor.execute(drop_table)
+        
+
         return result
 
     def create_saleorder(self,product_id,entered_by,cost,quantity,total):
+        
         sql = "INSERT INTO sales(product_id,entered_by,cost,quantity,total) \
             VALUES ('{}','{}','{}','{}',{})".format(product_id,entered_by,cost,quantity,total)
         result= self.cursor.execute(sql)
+        
+
         if result:
             return result
         return {"Key-Error": "Product you are trying to sell is unavailable. Enter valid Product Id"}
@@ -176,6 +160,8 @@ class Databasehandler:
             query = ("""UPDATE products SET product_name = '{}', unit_price = '{}', stock = '{}'  where product_id = '{}'""" .format(
                 product_name, unit_price, stock, product_id,))
             self.cursor.execute(query)
+            
+
             count = self.cursor.rowcount
             if int(count) > 0:
                 return True

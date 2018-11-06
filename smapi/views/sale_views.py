@@ -26,7 +26,7 @@ def add_sale_order():
             return jsonify({"message": invalid_sale}), 400
         db.get_a_pdt(product_id) 
         db.create_saleorder(product_id,entered_by,cost,quantity,total)
-        return jsonify({'You have sold':f'{quantity} of {product_id}'})
+        return jsonify({'You have sold':f'{quantity} units of product {product_id} at {total}'}),200
     return jsonify({"message":"Access denied, Log in as attendant to add sale orders."}), 401
 
 
