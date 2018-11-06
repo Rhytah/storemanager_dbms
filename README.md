@@ -1,10 +1,12 @@
-# storemanager_dbms
 
-[![Build Status](https://travis-ci.com/Rhytah/storemanager_dbms.svg?branch=develop)](https://travis-ci.com/Rhytah/storemanager_dbms)
 
-[![Coverage Status](https://coveralls.io/repos/github/Rhytah/storemanager_dbms/badge.svg?branch=feedback)](https://coveralls.io/github/Rhytah/storemanager_dbms?branch=feedback)
+[![Build Status](https://travis-ci.com/Rhytah/storemanager_dbms.svg?branch=develop)](https://travis-ci.com/Rhytah/storemanager_dbms)[![Coverage Status](https://coveralls.io/repos/github/Rhytah/storemanager_dbms/badge.svg?branch=feedback)](https://coveralls.io/github/Rhytah/storemanager_dbms?branch=feedback)[![Maintainability](https://api.codeclimate.com/v1/badges/32ed8c7262442003a252/maintainability)](https://codeclimate.com/github/Rhytah/storemanager_dbms/maintainability)
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/32ed8c7262442003a252/maintainability)](https://codeclimate.com/github/Rhytah/storemanager_dbms/maintainability)
+# STOREMANGER
+
+StoreManager is an online application designed to make management of information in a store more efficient.
+Store Owner has administrative rights to information about products, sales and attendants in his/her store. 
+This application is meant for use by a single store.
 
 ### Tools
 
@@ -18,6 +20,8 @@
 * PgAdmin      - Graphical User interface. Management tool for postgresql database
 
 **Getting Started**
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
 clone the github repo to your computer:
 * $git clone https://github.com/Rhytah/storemanager_dbms.git
 
