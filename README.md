@@ -1,6 +1,6 @@
 
 
-[![Build Status](https://travis-ci.com/Rhytah/storemanager_dbms.svg?branch=develop)](https://travis-ci.com/Rhytah/storemanager_dbms)[![Coverage Status](https://coveralls.io/repos/github/Rhytah/storemanager_dbms/badge.svg?branch=feedback)](https://coveralls.io/github/Rhytah/storemanager_dbms?branch=feedback)[![Maintainability](https://api.codeclimate.com/v1/badges/32ed8c7262442003a252/maintainability)](https://codeclimate.com/github/Rhytah/storemanager_dbms/maintainability)
+[![Build Status](https://travis-ci.com/Rhytah/storemanager_dbms.svg?branch=develop)](https://travis-ci.com/Rhytah/storemanager_dbms)  [![Coverage Status](https://coveralls.io/repos/github/Rhytah/storemanager_dbms/badge.svg?branch=feedback)]        (https://coveralls.io/github/Rhytah/storemanager_dbms?branch=feedback)[![Maintainability](https://api.codeclimate.com/v1/badges/32ed8c7262442003a252/maintainability)](https://codeclimate.com/github/Rhytah/storemanager_dbms/maintainability)
 
 # STOREMANGER
 

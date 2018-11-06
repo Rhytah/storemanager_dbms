@@ -63,6 +63,7 @@ class Databasehandler:
         cmd="INSERT INTO products(product_name,unit_price,category,stock) VALUES ('{}','{}','{}','{}');".format(product_name,unit_price,category,stock)
         self.cursor.execute(cmd)
         self.conn.close()
+        
     def get_pdts(self):
         cmd ="SELECT * FROM products;"
         self.cursor.execute(cmd)
@@ -137,7 +138,7 @@ class Databasehandler:
         usercmd ="SELECT * FROM users;"    
         self.cursor.execute(usercmd)
         users = self.cursor.fetchall()
-        self.conn.close()
+        # self.conn.close()
         return users
 
     def drop_table(self,table_name):        
