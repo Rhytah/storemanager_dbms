@@ -78,4 +78,4 @@ class SalesTestCase(unittest.TestCase):
             return(response.status)
 
     def tearDown(self):
-        self.db.drop_table('users')
+        self.db.drop_table('sales')
